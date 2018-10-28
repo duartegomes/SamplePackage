@@ -1,4 +1,4 @@
-Package: StockPredictoR
+Package: TAPC
 Type: Package
 Title: Predicts Stock Price Movement for Given Stock Symbol
 Version: 0.1.0
