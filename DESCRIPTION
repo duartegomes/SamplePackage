@@ -8,7 +8,15 @@ Description: This package predicts whether the stock price at tommorow's market 
 License: GPL-2
 LazyData: FLASE
 Imports:
-  quantmod,stats,xts
+  quantmod,stats,xts,curl,
+         desc,
+         jsonlite,
+         data.table,
+         RODBC,
+         utils,
+         tools,
+         yaml,
+         httr
 Suggests:
   knitr
 RoxygenNote: 6.0.1
