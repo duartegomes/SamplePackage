@@ -1,0 +1,95 @@
+---
+title: "11.2 Using the ShowWeightCalc and ApplyWeightCalc functions and review the results. Cleaning Data prior to applying weights.  "
+output: 
+   word_document:
+      highlight: "haddock"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+The Spiceworks chunks that are loaded to the Azure Data Lake are as close as we can get to a zero loss representation.  They are true representations of the original and the process by which we convert the raw file to TAP Chunk is *reversible*. In other words the original raw data can be retrieved from the TAP Chunk.  
+
+```{r Test Data}
+library(TAPChunks)
+# For this exercise we will use the Email Test Data that is stored as part of the package
+TestEmailChunk
+```
+One of the easiest tools to use to get an overview of the data is the SampleSize function.  This function needs to be passed a TAP Chunk and can also receive an optional parameter for grouping the data before summarising.  
+```{r SampleSize}
+# We can request a summary of the sample sizes using SampleSize function
+ShowSampleSize(cars)
+# Just remember to send a valid Chunk to the function
+ShowSampleSize(TestEmailChunk)
+# The output shows that the chunk still has dirty data and we can also see the sample size
+# Note that the function is alert to the presence of multiple months and will split the sample 
+# size by month automatically. 
+ShowSampleSize(TestEmailChunk, by = "timestamp")
+# In this last example we specifically requested a split by timestamp.  When the function is 
+# asked to split it returns extra columns for the total sample in the file and the percentage
+# of the sample to this total. Here we see that the Test Data file has 499 organizations.
+# Each month around 80% of them appear in each month.  This quick command can be very helpful
+# in deciding if we need to form the longitudinal set or not.
+```
+If a user wishes to filter out the dirty data and to only work with clean records
+then this can be easily achieved using the CleanChunk function.
+```{r Cleaning}
+cleanData <- CleanChunk(TestEmailChunk)
+# The function simply strips the orgs that don't have all firmographics from the 
+# file and stores it in a new table
+nrow(cleanData)
+# We can see that the new file now has 969 rows where the old file had 1,000
+ShowSampleSize(cleanData)
+# The ShowSampleSize function now does not report any dirty records
+ShowSampleSize(cleanData, by = "timestamp")
+# You can see that cleaning the data has not altered either the unweighted_sample or 
+# unweighted_total  
+# This is because the ShowSampleSize function always ingores
+# dirty data automatically
+```
+It is important to realise that the function works by counting the number of organizations
+in a series of sets that are defined in the by parameter.  This allows to see penetration 
+statistics using the ShowSampleSize function. Where the by request refers to an indicator that
+attaches only once to each org then the sample sizes listed in the function will sum to the
+total.  However there are indicators that may have many instances per org.  This is typical 
+of product information where each org will have lists of products.  In such cases the sample
+sizes listed will not sum to the total because each product can be installed in overlapping
+org sets.  We can experiment to see this behaviour.  
+```{r pen}
+cleanData <- CleanChunk(TestEmailChunk)
+orgsWithExchange <- FilterChunk(cleanData, "Exchange" %matches% variable)
+ShowSampleSize(orgsWithExchange)
+
+ShowSampleSize(orgsWithExchange, by = "email_delivery")
+28+58+53
+# We can see that the unweighted_sample for each email_delivery sums to the total
+ShowSampleSize(orgsWithExchange, by = "variable")
+3+28+43+1+73+2+33
+# Whereas the unweighted_sample for each variable excedes the total
+```
+In addition to cleaning we would also like to weight data.  This can be done using the ApplyWeightCalc
+function.  The function, in its simplest form, takes an unweighted Chunk and returns a Weighted one.
+The function also allows the user to choose wheathe to weight by Geo, Segment or Vertical or any
+combination of these three.  
+```{r Weight}
+weightedData <- ApplyWeightCalc(TestEmailChunk)
+# The function has created a new table which we can compare to the original
+nrow(TestEmailChunk)
+nrow(weightedData)
+# We can see that the number of records has not changed
+names(TestEmailChunk)
+names(weightedData)
+# We can also see that the system has added one column called weight to the file
+ShowSampleSize(weightedData)
+# We can see that the ShowSampleSize function now reports a weighted_sample size
+# We also imediately notice that it is the same as the unweighted size
+# This is because the weighting only shapes the data within the chunk and does not alter 
+# scale
+ShowSampleSize(AddFirmographics(weightedData), by = "Segment")
+# In this run we can see that LSB has been boosted, CSB is not materially altered and 
+# the Mid Market and enterprise segments reduced in importance
+ShowWeightCalc(TestEmailChunk, granularity = "S")
+# Here we have used the ShowWeightCalc to present the computation of each weight
+```
+

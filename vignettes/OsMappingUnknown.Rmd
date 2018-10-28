@@ -1,0 +1,42 @@
+---
+title: "Mapping OS"
+output:
+  html_document: default
+  pdf_document: default
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+
+'`r format(Sys.Date(), "%B %d, %Y")`'
+
+```{r, echo=FALSE}
+load("OSMapping.Rdata")
+library(data.table)
+library(knitr) 
+```
+
+
+*** 
+  
+> **OS mappings:**
+
+Timestamp:
+```{r echo=FALSE}
+kable(timestamp)
+```
+
+```{r echo=FALSE}
+kable(source.os.UNK) 
+```
+
+
+
+
+
+

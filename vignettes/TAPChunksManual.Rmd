@@ -1,0 +1,20 @@
+---
+title: "The TAPChunk Library"
+author: "Jonathan Tooley Associates Limitada"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{The TAPChunk Library}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## TAPChunks: An R package for using Chunks of Teleletry Data
+

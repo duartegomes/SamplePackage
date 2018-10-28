@@ -1,0 +1,34 @@
+---
+title: "Scale Weighting & Longitudinal"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r scale}
+cleanedData <- CleanChunk(TestEmailChunk)
+ShowWeightCalc(cleanedData)
+scaledData <- ApplyWeightCalc(cleanedData, WType = "Scale")
+shapedData <- ApplyWeightCalc(cleanedData, WType = "Shape")
+ShowSampleSize(scaledData, by = "email_delivery")
+ShowSampleSize(shapedData, by = "email_delivery")
+
+scaledData <- ApplyWeightCalc(cleanedData, granularity = "S", WType = "Scale")
+shapedData <- ApplyWeightCalc(cleanedData, granularity = "S", WType = "Shape")
+ShowSampleSize(scaledData)
+ShowSampleSize(shapedData)
+
+ShowSampleSize(TestEmailChunk, by = "timestamp")
+ShowLongitudinalSize(TestEmailChunk)
+
+shapedData <- ApplyWeightCalc(cleanedData)
+ShowSampleSize(shapedData)
+longSet <- ApplyLongitudinalSet(shapedData)
+ShowSampleSize(longSet)
+longSet <- ApplyWeightCalc(longSet)
+ShowSampleSize(longSet)
+```
+
