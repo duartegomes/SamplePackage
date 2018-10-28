@@ -1,4 +1,3 @@
-export(stock_predict)
 export("%matches%")
 export(ABSRead)
 export(ADLDirectory)
