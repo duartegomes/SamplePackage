@@ -1,16 +1,13 @@
-Package: TAPC
+Package: TAPChunks
 Type: Package
 Title: A library of tools for accessing and manipulating chunks of telemetry data
-Version: 0.1.0
+Version: 0.2.3
 Author: JTA
 Maintainer: JTA <duarte.gomes@jtaweb.net>
 Description: A library of tools for accessing and manipulating chunks.  
     This library contains simple functions that will allow the user to access
-    and create data chunks from the Spiceworks telemetry.
-License: GPL-2
-LazyData: true
-Imports:
-         curl,
+    and create data chunks from the Spiceworks telemetry.  
+Imports: curl,
          desc,
          jsonlite,
          data.table,
@@ -19,6 +16,12 @@ Imports:
          tools,
          yaml,
          httr
-Suggests:
-  knitr
-RoxygenNote: 6.0.1
+Depends: R (>= 3.1.0)
+License: file LICENSE
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.0
+Suggests: knitr,
+    rmarkdown,
+    testthat
+VignetteBuilder: knitr
