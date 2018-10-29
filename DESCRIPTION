@@ -8,7 +8,7 @@ Description: This package predicts whether the stock price at tommorow's market 
 License: GPL-2
 LazyData: true
 Imports:
-  quantmod,stats,xts,curl,
+         curl,
          desc,
          jsonlite,
          data.table,
