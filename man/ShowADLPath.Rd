@@ -7,47 +7,73 @@
 ShowADLPath(Source)
 }
 \arguments{
-\item{Source}{Name of the source, if the Source parameter is not provided then a list of sources will be shown:\cr
-\tabular{lll}{
-\tab \strong{Source}       \tab \strong{Effect} \tab \strong{Data Documentation:}\cr
-\tab \emph{Email}          \tab For the Spiceworks Email data \tab \code{\link{TestEmailChunk}}  \cr
-\tab \emph{Client}         \tab For the Spiceworks PC Client data \tab \code{\link{TestClientChunk}} \cr
-\tab \emph{Networkhv}      \tab For the Spiceworks Network data by hypervisor \tab \code{\link{TestNetworkhvChunk}} \cr
-\tab \emph{Networkos}      \tab For the Spiceworks Network data by operating system \tab \code{\link{TestNetworkosChunk}} \cr
-\tab \emph{ServerRoles}    \tab For the Spiceworks Server Roles data \tab \code{\link{TestServerRolesChunk}} \cr
-\tab \emph{WorkloadDB}     \tab For the Spiceworks Workload data for database products \tab \code{\link{TestWorkloadDBChunk}} \cr
-\tab \emph{WorkloadEco}    \tab This chunk lists the virt flag and data type along with Hypervisor and OS for the intersection of Network and VID \tab \code{\link{TestWorkloadEcoChunk}} \cr
-\tab \emph{WorkloadHW}     \tab This chunk lists the metadata that we received relating to server hardware. \tab \code{\link{TestWorkloadHWChunk}} \cr
-\tab \emph{WorkloadN}      \tab This chunk lists the virt flag and data type along with Hypervisor and OS for the Network style data \tab \code{\link{TestWorkloadNChunk}} \cr
-\tab \emph{WorkloadVID}    \tab This chunk lists the virt flag and data type along with Hypervisor and OS for the VID style data \tab \code{\link{TestWorkloadVIDChunk}} \cr
-\tab \emph{WorkloadWL}     \tab For the Spiceworks workload data for non-database products \tab \code{\link{TestWorkloadWLChunk}} \cr
-\tab \emph{CCMCost}        \tab For the Spiceworks CCM Cost data\cr
-\tab \emph{CCMUsage}       \tab For the Spiceworks CCM Usage data\cr
-\tab \emph{OnlineServices} \tab For the Spiceworks Online Services Data\cr
-\tab \emph{VID}            \tab For the Spiceworks VID Data\cr
-\tab \emph{ServerAge}      \tab For the Spiceworks Server Age Data\cr
-\tab \emph{Cosmos}         \tab For the Cosmos Data\cr
+\item{Source}{If the Source parameter is not provided then the interactive mode
+requests a numeric selection (n). A user may also supply a string
+with one of the following (Source) values:\cr
+\tabular{rlll}{
+\tab  n \strong{Source}       \tab \strong{Effect} \tab \strong{Data Documentation:}\cr
+\tab  1 \emph{Email}          \tab For the Spiceworks Email data \tab \code{\link{TestEmailChunk}}  \cr
+\tab  2 \emph{Client}         \tab For the Spiceworks PC Client data \tab \code{\link{TestClientChunk}} \cr
+\tab  3 \emph{Networkhv}      \tab For the Spiceworks Network data by hypervisor \tab \code{\link{TestNetworkhvChunk}} \cr
+\tab  4 \emph{Networkos}      \tab For the Spiceworks Network data by operating system \tab \code{\link{TestNetworkosChunk}} \cr
+\tab  5 \emph{ServerRoles}    \tab For the Spiceworks Server Roles data \tab \code{\link{TestServerRolesChunk}} \cr
+\tab  6 \emph{WorkloadDB}     \tab For the Spiceworks Workload data for database products \tab \code{\link{TestWorkloadDBChunk}} \cr
+\tab  7 \emph{WorkloadEco}    \tab This chunk lists the virt flag and data type along with Hypervisor and OS for the intersection of Network and VID \tab \code{\link{TestWorkloadEcoChunk}} \cr
+\tab  8 \emph{WorkloadHW}     \tab This chunk lists the metadata that we received relating to server hardware. \tab \code{\link{TestWorkloadHWChunk}} \cr
+\tab  9 \emph{WorkloadN}      \tab This chunk lists the virt flag and data type along with Hypervisor and OS for the Network style data \tab \code{\link{TestWorkloadNChunk}} \cr
+\tab 10 \emph{WorkloadVID}    \tab This chunk lists the virt flag and data type along with Hypervisor and OS for the VID style data \tab \code{\link{TestWorkloadVIDChunk}} \cr
+\tab 11 \emph{WorkloadWL}     \tab For the Spiceworks workload data for non-database products \tab \code{\link{TestWorkloadWLChunk}} \cr
+\tab 12 \emph{CCMCost}        \tab For the Spiceworks CCM Cost data\cr
+\tab 13 \emph{CCMUsage}       \tab For the Spiceworks CCM Usage data\cr
+\tab 14 \emph{OnlineServices} \tab For the Spiceworks Online Services Data\cr
+\tab 15 \emph{VID}            \tab For the Spiceworks VID Data\cr
+\tab 16 \emph{ServerAge}      \tab For the Spiceworks Server Age Data\cr
+\tab 17 \emph{Cosmos}         \tab For the Cosmos Data\cr
 }}
 }
 \value{
-Returns a string with the path releative to the root of the ADL directory. The sting
+Returns a string with the path releative to the root of the ADL directory. The string
 is tagged with an attribute \emph{Source} which has the value of the source selected in the parameter or by
 menu option. If the user cancels from the menu the function returns NULL.
 }
 \description{
 The data lake has a series of defined locations where various sources are stored.
-This function will return the path for a given source. If the user passes an unknown
-source (or doesn't give any parameter at all) then a list of sources will be shown.
+This function will return the path for a given source. If the user doesn't give any parameter at all, then the system will switch to an
+interactive mode whereby the user may select the source from a series of options.
 }
 \examples{
-ShowADLPath("Email")
+TAPChunks:::ShowADLPath("Email")
 }
 \seealso{
 \code{\link{TAPChunks}}
 
-Other Data Lake Controls: \code{\link{ReadADLChunk}},
-  \code{\link{ShowADLPrefix}}
+Other Internal Utilities: \code{\link{AddDimension}},
+  \code{\link{AddFirmographics}},
+  \code{\link{AddHierarchy}}, \code{\link{CheckChunkInfo}},
+  \code{\link{CheckDemogDB}}, \code{\link{CheckMemory}},
+  \code{\link{CheckPackage}},
+  \code{\link{CheckRequirements}},
+  \code{\link{CheckSourceYaml}},
+  \code{\link{CheckSpaceDisk}}, \code{\link{ConnectToADL}},
+  \code{\link{CreateTable}}, \code{\link{DetectError}},
+  \code{\link{FormatList}}, \code{\link{GetConfiguration}},
+  \code{\link{GetMapping}},
+  \code{\link{GetTimestampByObjInternal}},
+  \code{\link{GetTimestampByObj}}, \code{\link{HttpCode}},
+  \code{\link{LoadDemogDB}},
+  \code{\link{OpenSqlConnection}},
+  \code{\link{OptionsMessage}}, \code{\link{OrderColumn}},
+  \code{\link{RMarkdown}},
+  \code{\link{RecreateReadADLChunkExpression}},
+  \code{\link{SaveLocal}}, \code{\link{ShowADLPrefix}},
+  \code{\link{ShowConfigurationPath}},
+  \code{\link{TestNet}}, \code{\link{TestVPN}},
+  \code{\link{TimeStamps}}, \code{\link{Unzip}},
+  \code{\link{UpdateTAPChunks}},
+  \code{\link{ValidateChunk}}, \code{\link{WriteFmt}}
 }
 \author{
 JTA - The Data Scientists
 }
+\concept{Internal Utilities}
+\keyword{internal}

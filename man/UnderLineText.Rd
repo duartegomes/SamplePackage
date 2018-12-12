@@ -2,30 +2,34 @@
 % Please edit documentation in R/UnderLineText.R
 \name{UnderLineText}
 \alias{UnderLineText}
-\title{UnderLineText}
+\title{Printing UnderLined Text}
 \usage{
 UnderLineText(Text = "")
 }
 \arguments{
-\item{Text}{String to apply underline codes}
+\item{Text}{String to apply underline codes.}
 }
 \value{
-Returns a string preceded by Esc[4m and closed with Esc[24m
+Returns a string.
 }
 \description{
-Apply underline ANSI codes arount the submitted string
+This function underlines the text submitted by wrapping the text
+with ANSI escape sequences.
 }
 \examples{
-  cat(UnderLineText("Hello World!"))
-message(UnderLineText("Status 100"))
+  cat(TAPChunks:::UnderLineText("Hello World!"))
+message(TAPChunks:::UnderLineText("Status 100"))
 }
 \seealso{
+\code{\link{TAPChunks}}
+
 Other Text Formatters: \code{\link{BlueText}},
   \code{\link{BoldText}}, \code{\link{GreenText}},
-  \code{\link{RedText}}, \code{\link{YellowText}},
-  \code{\link{catInfo}}
+  \code{\link{ItalicText}}, \code{\link{RedText}},
+  \code{\link{StrikeText}}, \code{\link{YellowText}}
 }
 \author{
 JTA - The Data Scientists
 }
+\concept{Text Formatters}
 \keyword{internal}

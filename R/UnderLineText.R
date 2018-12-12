@@ -1,11 +1,13 @@
-#' @title UnderLineText
-#' @author JTA - The Data Scientists
-#' @description Apply underline ANSI codes arount the submitted string
-#' @return Returns a string preceded by Esc[4m and closed with Esc[24m
-#' @param Text String to apply underline codes
-#' @keywords internal
-#' @examples   cat(UnderLineText("Hello World!"))
-#' message(UnderLineText("Status 100"))
+#' @title Printing UnderLined Text
+#' @description This function underlines the text submitted by wrapping the text
+#' with ANSI escape sequences.
+#' @return Returns a string.
+#' @param Text String to apply underline codes.
+#' @examples   cat(TAPChunks:::UnderLineText("Hello World!"))
+#' message(TAPChunks:::UnderLineText("Status 100"))
 #' @family Text Formatters
+#' @keywords internal
+#' @author JTA - The Data Scientists
+#' @seealso \code{\link{TAPChunks}}
 UnderLineText <- function(Text = "")
   paste0("\033[4m", Text, "\033[24m")

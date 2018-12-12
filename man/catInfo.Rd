@@ -2,37 +2,38 @@
 % Please edit documentation in R/catInfo.R
 \name{catInfo}
 \alias{catInfo}
-\title{catInfo}
+\title{Print Information Messages}
 \usage{
 catInfo(Text, Highlight = NULL)
 }
 \arguments{
 \item{Text}{A string with the message that we wish to report to the user}
 
-\item{Highlight}{A string that can be found in the string that was passed to the Text parameter and which will be highlighted in bold text.  Defaults to NULL
-which results in no highlighting.}
+\item{Highlight}{A string that can be found in the string that was passed to the Text parameter
+and which will be highlighted in bold text.
+Defaults to NULL which results in no highlighting.}
 }
 \description{
-Print Info message with Highlighed text
-
-This function is used to pass a message to the console.  The message is indented with a tab character and a new line character will be appended.
-The message is printed in black.
+Print Information message with Highlighed text
 }
 \details{
 This is best shown by some examples:
 \preformatted{
-catInfo("Hello user.", "user")}
+TAPChunks:::catInfo("Hello user.", "user")}
  - Hello \strong{user}.
 \preformatted{
-catInfo("Hello user.", "Name")}
+TAPChunks:::catInfo("Hello user.", "Name")}
  - Hello user.
 }
 \seealso{
 \code{\link{TAPChunks}}
 
-Other Text Formatters: \code{\link{BlueText}},
-  \code{\link{BoldText}}, \code{\link{GreenText}},
-  \code{\link{RedText}}, \code{\link{UnderLineText}},
-  \code{\link{YellowText}}
+Other Console Messaging Functions: \code{\link{catError}},
+  \code{\link{catStyle}}, \code{\link{catSuccess}},
+  \code{\link{catSuperUser}}, \code{\link{catWarning}}
 }
+\author{
+JTA - The Data Scientists
+}
+\concept{Console Messaging Functions}
 \keyword{internal}

@@ -2,24 +2,34 @@
 % Please edit documentation in R/YellowText.R
 \name{YellowText}
 \alias{YellowText}
-\title{YellowText}
+\title{Printing Yellow Text}
 \usage{
 YellowText(Text)
 }
 \arguments{
-\item{Text}{String to apply font color}
+\item{Text}{String to apply font color.}
+}
+\value{
+Returns a string.
 }
 \description{
-Apply yellow font color
+This function applies yellow font color to the text submitted by wrapping the text
+with ANSI escape sequences.
 }
 \examples{
-  cat(YellowText("Hello World!"))
-message(YellowText("Status100"))
+  cat(TAPChunks:::YellowText("Hello World!"))
+message(TAPChunks:::YellowText("Status100"))
 }
 \seealso{
+\code{\link{TAPChunks}}
+
 Other Text Formatters: \code{\link{BlueText}},
   \code{\link{BoldText}}, \code{\link{GreenText}},
-  \code{\link{RedText}}, \code{\link{UnderLineText}},
-  \code{\link{catInfo}}
+  \code{\link{ItalicText}}, \code{\link{RedText}},
+  \code{\link{StrikeText}}, \code{\link{UnderLineText}}
 }
+\author{
+JTA - The Data Scientists
+}
+\concept{Text Formatters}
 \keyword{internal}

@@ -1,0 +1,49 @@
+#' @title Add geography hierarchy to a data chunk
+#' @description This function allows you to add a Geo hierarchy to the chunk.
+#' @section Geo Hierarchy:
+#' The function accesses the RDR and retrieves the standard geography
+#' hierarchy that is matched to the country names that the file has.
+#' @section Hierarchies available:
+#' \tabular{llllll}{
+#' \strong{Hierarchy Name} \tab \strong{Level1} \tab \strong{Level2} \tab \strong{Level3} \tab \strong{Level4} \tab \strong{Level5} \cr
+#' \strong{Org Geo (default)}        \tab Country         \tab Subsidiary      \tab SubReg          \tab Region          \tab Area \cr
+#' \strong{DSST Geo}       \tab DSST Country    \tab Area }
+#' @section Columns fields description:
+#' \tabular{ll}{
+#' \strong{Area}   \tab The MS Sales area for the country\cr
+#' \strong{Region} \tab The MS Sales region\cr
+#' \strong{SubReg} \tab The MS Sales sub-region\cr
+#' \strong{Subsidiary} \tab The MS Sales subsidiary\cr
+#' \strong{Country} \tab The country value attributed by the data provider}
+#'
+#' @section Reference Data Repository:
+#' The Reference Data Repository (RDR) allows stores master data relating to
+#' our taxonomy.  It can be used to add taxonomy hierarchies to chunks that have had
+#' firmographic data added. Firmographic data is
+#' established by our data load processes (which refer to the RDR to allocate firmographics)
+#' and is stored in a separate database.
+#'
+#' Functions that access the RDR require an internet connection which has access to
+#' MS Corp net.
+#'
+#' @family RDR Integration Tools
+#' @export
+#' @import data.table
+#' @author JTA - The Data Scientists
+#' @param Data This is a required field and is usually a TAP chunk but it can be any item of class "data.table" or "data.frame".
+#' If the user submits a data frame then this will first be converted to a data table before the calculated column is added.
+#' This is because data tables are far more efficient in R than a data frame.
+#' The resulting table that is returned by this function will also be a data table even if a data frame was submitted.
+#' @param SelectHierarchy Name of the Hierarchy to be added in the Chunk
+#' @return A data chunk with the additional hierarchy columns added
+#' @examples AddGeoHierarchy(TestEmailChunk)
+#' @seealso \code{\link{TAPChunks}}
+AddGeoHierarchy <- function(Data, SelectHierarchy = NULL) {
+  if (!"Country" %in% names(Data)) Data <- TAPChunks:::AddFirmographics(Data, Dimension = "G")
+
+  if (is.null(SelectHierarchy)) {
+    SelectHierarchy <- "Org Geo"
+  }
+  Data <- TAPChunks:::AddDimension(Data = Data, Dimension = "G", SelectHierarchy = SelectHierarchy)
+  return(Data)
+}

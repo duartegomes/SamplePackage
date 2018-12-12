@@ -20,7 +20,7 @@
 #' \emph{value} \tab The value that was in the original column. \cr
 #' }
 #' @section Example Content:
-#'\tabular{lrlllllr}{
+#' \tabular{lrlllllr}{
 #'  \strong{uuid} \tab \strong{sw_flag} \tab \strong{email_delivery} \tab \strong{email_server} \tab \strong{host} \tab \strong{timestamp} \tab \strong{variable} \tab \strong{value}\cr
 #'  b2265... \tab 1 \tab onsite   \tab microsoft                         \tab on site                  \tab 2015M01 \tab exchange_other \tab 1\cr
 #'  0235a... \tab 1 \tab hosted   \tab                                   \tab office 365 - protection  \tab 2015M01 \tab exchange_2003  \tab 1\cr

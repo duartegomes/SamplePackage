@@ -51,7 +51,8 @@ Leave the filter blank: \tab CalculateColumn(iris, , newcol := 1)\cr
 Name the parameters:    \tab CalculateColumn(Data = iris, Calculation = newcol := 1)\cr
 }
 We recommend always naming the parameters for all TAPChunks functions to avoid errors in
-interpretation.  The first example that we gave requires a comma and is not so clear. The second example does not require the extra comma because
+interpretation.  The first example that we gave requires a extra comma to specify that filter is blank.
+The second example does not require the extra comma because we explicitly name the parameters.
 }
 
 \section{Receiving the result}{
@@ -183,7 +184,7 @@ either integer, numeric or complex.  The other operators < > <= >= == != work wi
 to try and make sense of other data types. For example TRUE + FALSE is valid.  The system will interpret FALSE and the integer 0 and TRUE as the integer 1.  This means that
 the system will consider that FALSE < TRUE is a true statement. \cr \cr
 \strong{Functions:}\cr
-Calculations may also use functions and these functions may be those that are defines in R or they may be defined by the user.  When using a function it is important
+Calculations may also use functions and these functions may be those that are defined in R or they may be defined by the user.  When using a function it is important
 to consider the cardinality of the inputs and the result.  Some functions are designed to transform a single value to another single value, for example sqrt(n). In this
 example when we use the function sqrt the column created will calculate a value for each row.  Other functions, however, take a set of numbers and aggregate them into
 one single value. When we use these functions the calculation can aggregate the entire column and will place the result in every row of the result.  This is best demonstrated
@@ -314,12 +315,12 @@ CalculateColumn(Data = iris, Calculation = newcol := 1)
 \seealso{
 \code{\link{TAPChunks}}
 
-Other Chunk Manipulators: \code{\link{AddFirmographics}},
-  \code{\link{AddOSHierarchy}},
-  \code{\link{AggregateChunk}}, \code{\link{FilterChunk}},
-  \code{\link{JoinChunks}}, \code{\link{RMarkdown}},
-  \code{\link{ShapeChunk}}, \code{\link{UseAsSlicer}}
+Other Chunk Manipulators: \code{\link{AggregateChunk}},
+  \code{\link{FilterChunk}}, \code{\link{JoinChunks}},
+  \code{\link{MergeChunks}}, \code{\link{SelectColumns}},
+  \code{\link{ShapeChunk}}, \code{\link{ShowSampleSize}}
 }
 \author{
 JTA - The Data Scientists
 }
+\concept{Chunk Manipulators}

@@ -7,26 +7,28 @@
 ShowCacheStatus(Source = "")
 }
 \arguments{
-\item{Source}{Name of the source, if the Source parameter is not provided then a list of sources will be shown:\cr
-\tabular{lll}{
-\tab \strong{Source}       \tab \strong{Effect} \tab \strong{Data Documentation:}\cr
-\tab \emph{Email}          \tab For the Spiceworks Email data \tab \code{\link{TestEmailChunk}}  \cr
-\tab \emph{Client}         \tab For the Spiceworks PC Client data \tab \code{\link{TestClientChunk}} \cr
-\tab \emph{Networkhv}      \tab For the Spiceworks Network data by hypervisor \tab \code{\link{TestNetworkhvChunk}} \cr
-\tab \emph{Networkos}      \tab For the Spiceworks Network data by operating system \tab \code{\link{TestNetworkosChunk}} \cr
-\tab \emph{ServerRoles}    \tab For the Spiceworks Server Roles data \tab \code{\link{TestServerRolesChunk}} \cr
-\tab \emph{WorkloadDB}     \tab For the Spiceworks Workload data for database products \tab \code{\link{TestWorkloadDBChunk}} \cr
-\tab \emph{WorkloadEco}    \tab This chunk lists the virt flag and data type along with Hypervisor and OS for the intersection of Network and VID \tab \code{\link{TestWorkloadEcoChunk}} \cr
-\tab \emph{WorkloadHW}     \tab This chunk lists the metadata that we received relating to server hardware. \tab \code{\link{TestWorkloadHWChunk}} \cr
-\tab \emph{WorkloadN}      \tab This chunk lists the virt flag and data type along with Hypervisor and OS for the Network style data \tab \code{\link{TestWorkloadNChunk}} \cr
-\tab \emph{WorkloadVID}    \tab This chunk lists the virt flag and data type along with Hypervisor and OS for the VID style data \tab \code{\link{TestWorkloadVIDChunk}} \cr
-\tab \emph{WorkloadWL}     \tab For the Spiceworks workload data for non-database products \tab \code{\link{TestWorkloadWLChunk}} \cr
-\tab \emph{CCMCost}        \tab For the Spiceworks CCM Cost data\cr
-\tab \emph{CCMUsage}       \tab For the Spiceworks CCM Usage data\cr
-\tab \emph{OnlineServices} \tab For the Spiceworks Online Services Data\cr
-\tab \emph{VID}            \tab For the Spiceworks VID Data\cr
-\tab \emph{ServerAge}      \tab For the Spiceworks Server Age Data\cr
-\tab \emph{Cosmos}         \tab For the Cosmos Data\cr
+\item{Source}{If the Source parameter is not provided then the interactive mode
+requests a numeric selection (n). A user may also supply a string
+with one of the following (Source) values:\cr
+\tabular{rlll}{
+\tab  n \strong{Source}       \tab \strong{Effect} \tab \strong{Data Documentation:}\cr
+\tab  1 \emph{Email}          \tab For the Spiceworks Email data \tab \code{\link{TestEmailChunk}}  \cr
+\tab  2 \emph{Client}         \tab For the Spiceworks PC Client data \tab \code{\link{TestClientChunk}} \cr
+\tab  3 \emph{Networkhv}      \tab For the Spiceworks Network data by hypervisor \tab \code{\link{TestNetworkhvChunk}} \cr
+\tab  4 \emph{Networkos}      \tab For the Spiceworks Network data by operating system \tab \code{\link{TestNetworkosChunk}} \cr
+\tab  5 \emph{ServerRoles}    \tab For the Spiceworks Server Roles data \tab \code{\link{TestServerRolesChunk}} \cr
+\tab  6 \emph{WorkloadDB}     \tab For the Spiceworks Workload data for database products \tab \code{\link{TestWorkloadDBChunk}} \cr
+\tab  7 \emph{WorkloadEco}    \tab This chunk lists the virt flag and data type along with Hypervisor and OS for the intersection of Network and VID \tab \code{\link{TestWorkloadEcoChunk}} \cr
+\tab  8 \emph{WorkloadHW}     \tab This chunk lists the metadata that we received relating to server hardware. \tab \code{\link{TestWorkloadHWChunk}} \cr
+\tab  9 \emph{WorkloadN}      \tab This chunk lists the virt flag and data type along with Hypervisor and OS for the Network style data \tab \code{\link{TestWorkloadNChunk}} \cr
+\tab 10 \emph{WorkloadVID}    \tab This chunk lists the virt flag and data type along with Hypervisor and OS for the VID style data \tab \code{\link{TestWorkloadVIDChunk}} \cr
+\tab 11 \emph{WorkloadWL}     \tab For the Spiceworks workload data for non-database products \tab \code{\link{TestWorkloadWLChunk}} \cr
+\tab 12 \emph{CCMCost}        \tab For the Spiceworks CCM Cost data\cr
+\tab 13 \emph{CCMUsage}       \tab For the Spiceworks CCM Usage data\cr
+\tab 14 \emph{OnlineServices} \tab For the Spiceworks Online Services Data\cr
+\tab 15 \emph{VID}            \tab For the Spiceworks VID Data\cr
+\tab 16 \emph{ServerAge}      \tab For the Spiceworks Server Age Data\cr
+\tab 17 \emph{Cosmos}         \tab For the Cosmos Data\cr
 }}
 }
 \value{
@@ -51,14 +53,13 @@ ShowCacheStatus("Email")
 \seealso{
 \code{\link{TAPChunks}}
 
-Other Cache Controls: \code{\link{CleanMemory}},
-  \code{\link{DeleteCache}},
+Other Cache Controls: \code{\link{DeleteCache}},
   \code{\link{DeleteOutdatedCache}},
-  \code{\link{ListCacheDirectory}}, \code{\link{Protect}},
+  \code{\link{ListCacheDirectory}},
   \code{\link{RefreshCache}}, \code{\link{ShowCachePath}},
-  \code{\link{ShowConfigurationPath}},
   \code{\link{Unprotect}}
 }
 \author{
 JTA - The Data Scientists
 }
+\concept{Cache Controls}

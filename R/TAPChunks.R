@@ -1,579 +1,151 @@
-#' TAPChunks: A package for curating and manipulating chunks of Telemetry data
+#' @title A package for curating and manipulating chunks of Telemetry data
+#' @description
+#' This is a package of functions developed to simplify working with telemetry data. The package
+#' is part of the wider TAP architecture which is described here \code{\link{Architecture}}
 #'
 #' The TAPChunks package provides these categories of important functions:
 #'  \enumerate{
-#'   \item Understanding what is available on the data lake
-#'   \item Controlling your local cache
-#'   \item Weighting and cleaning data
-#'   \item Manipulating data
-#'   \item Reporting data
-#'   \item Internal utilities
+#'   \item Data Lake Tools
+#'   \item Cache Controls
+#'   \item Chunk Manipulators
+#'   \item RDR Integration Tools
+#'   \item Weighting and Cleaning Functions
+#'   \item Modeling Tools
+#'   \item Compute Tools
+#'   \item Reporting and Saving Tools
+#'   \item Utilities
 #'   \item Example data files
 #' }
 #'
-#' @section 1. Understanding what is available on the data lake:
+#' @section 1. Data Lake Tools:
 #' For the current release the TAPChunks package works with a series of data
 #' files that are loaded by an internal CMR process to our Azure Data Lake.  This uses
 #' big data technologies to give us a highly scalable storage area with telemetry data. \cr\cr
 #' \strong{Functions:} \cr
-#' See what is in the Data Lake:      \code{\link{ADLDirectory}} \cr
-#' To copy chunks from the lake to the cache: \code{\link{ADLReadChunk}} \cr
-#' To copy files  from the lake to the cache: \code{\link{ADLRead}} \cr
-#' To read files from Azure Blob Storage: \code{\link{ABSRead}} \cr
-#' To save files in the Data Lake: \code{\link{ADLSave}} \cr
+#' List files in the Data Lake  \code{\link{ListADLDirectory}} \cr
+#' Download Files from Blob Storage  \code{\link{ReadABSFile}} \cr
+#' Reading Source Chunks from the Data Lake  \code{\link{ReadADLChunk}} \cr
+#' Reading user data from the Data Lake  \code{\link{ReadADLFile}} \cr
+#' Save file in the Data Lake  \code{\link{UploadLocallyToADL}} \cr
 #'
-#'
-#'
-#' @section 2. Controlling your local cache:
+#' @section 2. Cache Controls:
 #' All data must be copied from the data lake to a local environment called the cache.  This is
 #' a directory that the TAPChunks package will establish on the user's PC where copies of the
 #' chunks can be stored.\cr\cr
 #' \strong{Functions:} \cr
-#' To get the path of the local cache: \code{\link{CachePath}} \cr
-#' To delete files from your cache: \code{\link{DeleteCache}} \cr
-#' To list files that are in your cache: \code{\link{CacheDirectory}} \cr
-#' To refresh data that has been superseded on the lake: \code{\link{RefreshCache}} \cr
-#' To see if data has been superseded on the lake: \code{\link{ShowCacheStatus}} \cr
-#' To copy chunks from the lake to the cache: \code{\link{ADLRead}}
+#' Deleting files from the local cache  \code{\link{DeleteCache}} \cr
+#' Delete outdated Rdata files in cache folder  \code{\link{DeleteOutdatedCache}} \cr
+#' List files in the local cache  \code{\link{ListCacheDirectory}} \cr
+#' Detecting when data on the Data Lake has been updated  \code{\link{RefreshCache}} \cr
+#' Establishing, pointing and set to the cache folder  \code{\link{ShowCachePath}} \cr
+#' Detecting when data on the Data Lake has been updated  \code{\link{ShowCacheStatus}} \cr
 #'
-#' @section 3. Weighting and cleaning data:
+#' @section 3. Chunk Manipulators:
+#' The functions in this section are all designed to allow for the simple manipulation
+#' and summarization of data chunks. \cr\cr
+#' \strong{Functions:} \cr
+#' Aggregate chunks to create smaller chunks  \code{\link{AggregateChunk}} \cr
+#' Add Calculated Columns to data chunks  \code{\link{CalculateColumn}} \cr
+#' Filtering data chunks  \code{\link{FilterChunk}} \cr
+#' Joining two data chunks to form one  \code{\link{JoinChunks}} \cr
+#' Merge Chunks Objects  \code{\link{MergeChunks}} \cr
+#' Select Columns in Chunk  \code{\link{SelectColumns}} \cr
+#' Shape chunk - Pivot and Unpivot  \code{\link{ShapeChunk}} \cr
+#' Summarizing a file to see the sample size  \code{\link{ShowSampleSize}} \cr
+#'
+#' @section 4. RDR Integration Tools:
+#' \cr\cr
+#' \strong{Functions:} \cr
+#' Add Demographics to a data chunk\code{\link{AddFirmographics}}
+#' Add Geography hierarchy to a data chunk  \code{\link{AddGeoHierarchy}} \cr
+#' Adding Firmographics (Geo, Segment and Vertical)  \code{\link{AddGSVHierarchy}} \cr
+#' Add OS Mappings to a Data Chunk  \code{\link{AddOSHierarchy}} \cr
+#' Add Product hierarchy to a data chunk  \code{\link{AddProductHierarchy}} \cr
+#' Add Segment hierarchy to a data chunk  \code{\link{AddSegmentHierarchy}} \cr
+#' Add Vertical hierarchy to a data chunk  \code{\link{AddVerticalHierarchy}} \cr
+#'
+#' @section 5. Weighting and cleaning data:
 #' The data chunks that we receive from Spiceworks are stored in a raw format that is completely
 #' faithful to the original data.  This means that the chunks may have unclean data and the data
 #' is not weighted.  Because of this the TAPChunks package offers some simple functions to help
 #' the user perform these tasks.\cr\cr
 #' \strong{Functions:} \cr
-#' To keep only the clean data in a chunk: \code{\link{CleanChunk}} \cr
-#' To review the weight calculation: \code{\link{WeightCalculation}} \cr
-#' To apply weights to a chunk:  \cr
+#' Forming the Longitudinal Data Set  \code{\link{ApplyLongitudinalSet}} \cr
+#' Weighting and cleaning functions: Applying weights to data  \code{\link{ApplyWeightCalc}} \cr
+#' Stripping Spiceworks chunks of unclean records  \code{\link{CleanChunk}} \cr
+#' Show the Size of a Longitudinal Set  \code{\link{ShowLongitudinalSize}} \cr
+#' Reviewing a weight calculation  \code{\link{ShowWeightCalc}} \cr
 #'
-#' @section 4. Manipulating data:
-#' The functions in this section are all designed to allow for the simple manipulation
-#' and summarization of data chunks. \cr\cr
+#' @section 6. Modeling Tools:
+#' \cr\cr
 #' \strong{Functions:} \cr
-#' To generate weighted and unweighted org counts:  \cr
-#' To generate weighted and unweighted device counts:  \cr
-#' To generate weighted and unweighted install counts:  \cr
-#' To keep only the data from orgs which exist in all time periods:  \cr
-#' To filter items from data: \code{\link{FilterChunk}} \cr
-#' To join chunks keeping all data: \code{\link{JoinChunks}} \cr
-#' To join chunks keeping only the data for orgs in the intersection:  \cr
+#' Preparing data for IPF  \code{\link{PrepareIPF}} \cr
+#' Run an Iterative Proportional Fit  \code{\link{RunIPF}} \cr
 #'
-#' @section 5. Reporting data:
+#' @section 7. Compute Tools:
+#' \cr\cr
+#' \strong{Functions:} \cr
+#' Delimiter for use when setting up Iterations  \code{\link{BeginIterate}} \cr
+#' Clean large tables from the memory  \code{\link{CleanMemory}} \cr
+#' Delimiter for use when setting up Iterations  \code{\link{EndIterate}} \cr
+#' Run a script iteratively over a series of months  \code{\link{IterateScript}} \cr
+#' Protect a table in memory from deletion  \code{\link{Protect}} \cr
+#' Unprotect the object that has been assigned as Protected  \code{\link{Unprotect}} \cr
+#'
+#' @section 8. Reporting and saving tools:
 #' The functions in this section allow the user to deliver cubes and reports more easily. \cr\cr
 #' \strong{Functions:} \cr
+#' Reporting and saving tools: Appending data to a disk file  \code{\link{AppendCSV}} \cr
+#' Reporting and saving tools: Calculate penetration in Data Set  \code{\link{ApplyPenetration}} \cr
+#' Export to SQL  \code{\link{ExportToSQL}} \cr
+#' Publish File into the Data Lake  \code{\link{PublishADL}} \cr
+#' Save file in the Data Lake  \code{\link{SaveADL}} \cr
+#' UseAsSlicer  \code{\link{UseAsSlicer}} \cr
 #'
-#' @section 6. Internal utilities:
-#' These are functions that are typically only used internally within the TAPChunks
+#' @section 9. Utilities:
+#' These are functions that are used to assist users.
 #' package.  \cr\cr
-#' \strong{Functions:} \cr
-#' To check that the system has internet access: \code{\link{TestNet}} \cr
-#' To check the latest demographics data: \code{\link{CheckDemogDB}} \cr
-#' To load the latest demographics data: \code{\link{LoadDemogDB}} \cr
-#' To open a connection to the data lake: \code{\link{ConnectToADL}} \cr
-#' To generate a list of Spiceworks timestamps: \code{\link{TimeStamps}} \cr
-#' To check that data is a valid chunk: \code{\link{ValidateChunk}} \cr
-#' To get the Path on the data lake to a source: \code{\link{ADLPath}} \cr
-#' To get the file prefix used to distinguish a source: \code{\link{ADLPrefix}} \cr
+#' \strong{Functions:}
+#' Pass Data to an Excel Spreadsheet  \code{\link{Xcel}} \cr
 #'
-#' @section 7. Example data files:
+#' @section 10. Example data files:
 #' In order to help users to run the examples given in the help pages there
 #' are example data files provided. These can be used for experimentation, training and
 #' as test data to ensure scripts are working. They are exact copies of Spiceworks data
-#' but are limited to only 500 records each.  \cr\cr
-#' \strong{Data:} \cr
-#' \tabular{ll}{
-#' Email       \tab \code{\link{TestEmailChunk}}  \cr
-#' Client      \tab \code{\link{TestClientChunk}} \cr
-#' Networkhv   \tab \code{\link{TestNetworkhvChunk}}   \cr
-#' Networkos   \tab \code{\link{TestNetworkosChunk}}   \cr
-#' ServerRoles \tab \code{\link{TestServerRolesChunk}} \cr
-#' WorkloadDB  \tab \code{\link{TestWorkloadDBChunk}}  \cr
-#' WorkloadEco \tab \code{\link{TestWorkloadEcoChunk}} \cr
-#' WorkloadHW  \tab \code{\link{TestWorkloadHWChunk}} \cr
-#' WorkloadN   \tab \code{\link{TestWorkloadNChunk}} \cr
-#' WorkloadVID \tab \code{\link{TestWorkloadVIDChunk}} \cr
-#' WorkloadWL  \tab \code{\link{TestWorkloadWLChunk}} \cr
-#'}
+#' but are limited to only 500 records each (except for the TestEmailChunk which has two
+#' periods and 1000 records.  \cr\cr
+#' \strong{Data Files:} \cr
+#' \code{\link{TestCCMCostChunk}} \cr
+#' \code{\link{TestCCMUsageChunk}} \cr
+#' \code{\link{TestClientChunk}} \cr
+#' \code{\link{TestEmailChunk}} \cr
+#' \code{\link{TestNetworkhvChunk}} \cr
+#' \code{\link{TestNetworkosChunk}} \cr
+#' \code{\link{TestOnlineServicesChunk}} \cr
+#' \code{\link{TestServerRolesChunk}} \cr
+#' \code{\link{TestVIDChunk}} \cr
+#' \code{\link{TestWorkloadDBChunk}} \cr
+#' \code{\link{TestWorkloadEcoChunk}} \cr
+#' \code{\link{TestWorkloadHWChunk}} \cr
+#' \code{\link{TestWorkloadNChunk}} \cr
+#' \code{\link{TestWorkloadVIDChunk}} \cr
+#' \code{\link{TestWorkloadWLChunk}} \cr
+#'
 #' @docType package
 #' @name TAPChunks
 NULL
 
-
-
-
-
-
-
-
-
-#' @title Test ServerRoles data
-#' @name TestServerRolesChunk
-#' @family Test Data
+#' @title TAP Architecture
+#' @name Architecture
 #' @description
-#' This is an example of a raw Server Role chunk as we receive them from SpiceWorks. The
-#' data file is limited to 500 records and relates to just one period - 2016M01.
-#' @section File Columns:
-#' \tabular{ll}{
-#' \strong{Column Name} \tab \strong{Description} \cr
-#' \emph{row_id} \tab This is the identifier of the original row from where the data was obtained.
-#' This allows us to recreate the exact same representation that we received from SpiceWorks.\cr
-#' \emph{id} \tab \cr
-#' \emph{uuid} \tab This is the standard org identifier for Spiceworks files.\cr
-#' \emph{server_roles_uuid} \tab \cr
-#' \emph{timestamp} \tab \cr
-#' \emph{variable} The name of the original Spiceworks Product Column.\tab \cr
-#' \emph{value}\tab \cr}
-#' @section Example Content:
-#' \tabular{rllllr}{
-#' \strong{id} \tab \strong{uuid} \tab \strong{server_roles_uuid} \tab \strong{timestamp} \tab \strong{variable} \tab \strong{value}\cr
-#' 1 \tab 0235a... \tab 2fa78c8.... \tab 2016M01 \tab cat_base               \tab 1\cr
-#' 1 \tab 0235a... \tab 2fa78c8.... \tab 2016M01 \tab file_and_storage_481   \tab 1\cr
-#' 1 \tab 0235a... \tab 2fa78c8.... \tab 2016M01 \tab cat_born_cloud         \tab 1\cr
-#' 1 \tab 0235a... \tab 2fa78c8.... \tab 2016M01 \tab web_2                  \tab 1\cr
-#' 1 \tab 0235a... \tab 2fa78c8.... \tab 2016M01 \tab dotnet_45_features_466 \tab 1\cr
-#' 1 \tab 0235a... \tab 2fa78c8.... \tab 2016M01 \tab cat_cloud_infra        \tab 1\cr
-#' 1 \tab 0235a... \tab 2fa78c8.... \tab 2016M01 \tab powershell_417         \tab 1\cr
-#' 1 \tab 0235a... \tab 2fa78c8.... \tab 2016M01 \tab cat_legacy             \tab 1\cr
-#' 1 \tab 0235a... \tab 2fa78c8.... \tab 2016M01 \tab wow64_support_340      \tab 1
-#' }
-#' @section Variables Included:
-#' \tabular{ll}{
-#' \strong{variable} \tab \strong{Notes}\cr
-#' \emph{ ad_cert_svcs_16 } \tab \cr
-#' \emph{ ad_domain_svcs_10 } \tab \cr
-#' \emph{ ad_fed_svcs_8 } \tab \cr
-#' \emph{ ad_lite_dir_svcs_9 } \tab \cr
-#' \emph{ apps_1 } \tab \cr
-#' \emph{ branchcache_324 } \tab \cr
-#' \emph{ cat_base } \tab \cr
-#' \emph{ cat_born_cloud } \tab \cr
-#' \emph{ cat_cloud_infra } \tab \cr
-#' \emph{ cat_legacy } \tab \cr
-#' \emph{ dhcp_12 } \tab \cr
-#' \emph{ dns_13 } \tab \cr
-#' \emph{ dotnet_351_36 } \tab \cr
-#' \emph{ dotnet_45_features_466 } \tab \cr
-#' \emph{ essntls_exprnce_485 } \tab \cr
-#' \emph{ failover_cluster_33 } \tab \cr
-#' \emph{ file_6 } \tab \cr
-#' \emph{ file_and_storage_481 } \tab \cr
-#' \emph{ group_policy_69 } \tab \cr
-#' \emph{ hyperv_20 } \tab \cr
-#' \emph{ msg_queuing_49 } \tab \cr
-#' \emph{ multipath_io_57 } \tab \cr
-#' \emph{ powershell_417 } \tab \cr
-#' \emph{ powershell_int_scripting_351 } \tab \cr
-#' \emph{ print_7 } \tab \cr
-#' \emph{ remote_admin_67 } \tab \cr
-#' \emph{ remote_desktop_18 } \tab \cr
-#' \emph{ telnet_client_44 } \tab \cr
-#' \emph{ web_2 } \tab \cr
-#' \emph{ win_activation_svcs_41 } \tab \cr
-#' \emph{ win_deploy_svcs_19 } \tab \cr
-#' \emph{ win_powershell_66 } \tab \cr
-#' \emph{ win_server_update_21 } \tab \cr
-#' \emph{ wins_svr_40 } \tab \cr
-#' \emph{ winsvr_backup_39 } \tab \cr
-#' \emph{ wow64_support_340 }\tab \cr}
-#' @aliases ad_cert_svcs_16 ad_domain_svcs_10 ad_fed_svcs_8 ad_lite_dir_svcs_9
-#' apps_1 branchcache_324 cat_base cat_born_cloud cat_cloud_infra cat_legacy
-#' dhcp_12 dns_13 dotnet_351_36 dotnet_45_features_466 essntls_exprnce_485
-#' failover_cluster_33 file_6 file_and_storage_481 group_policy_69 hyperv_20
-#' msg_queuing_49 multipath_io_57 powershell_417 powershell_int_scripting_351
-#' print_7 remote_admin_67 remote_desktop_18 telnet_client_44 web_2
-#' win_activation_svcs_41 win_deploy_svcs_19 win_powershell_66 win_server_update_21
-#' wins_svr_40 winsvr_backup_39 wow64_support_340 ServerRoles serverroles
-#' @docType data
-#' @author Jonathan Tooley Associados Lda
-#' @keywords internal
-#' @seealso \code{\link{TAPChunks}}
+#' \if{html}{\figure{architecture.jpg}{options: width="60\%" alt="Figure: architecture.jpg"}}
+#' \if{latex}{\figure{architecture.pdf}{options: width="6in" alt="Figure: architecture.pdf"}}
 NULL
 
-#' @title Test Workload (Database Edition) data
-#' @name TestWorkloadDBChunk
-#' @family Test Data
-#' @description
-#' This is an example of a raw Workload (Database Edition) chunk as we receive them from SpiceWorks. The
-#' data file is limited to 500 records and relates to just one period - 2016M01.
-#' @section File Columns:
-#' \tabular{ll}{
-#' \strong{Column Name} \tab \strong{Description} \cr
-#' \emph{row_id} \tab \cr
-#' \emph{uuid} \tab \cr
-#' \emph{server_roles_uuid} \tab \cr
-#' \emph{timestamp} \tab \cr
-#' \emph{variable} \tab \cr
-#' \emph{value}\tab \cr}
-#' @section Example Content:
-#' \tabular{llllr}{
-#' \strong{uuid} \tab \strong{server_roles_uuid} \tab \strong{timestamp} \tab \strong{variable} \tab \strong{value}\cr
-#' 0235a... \tab                 \tab 2016M01 \tab db_sql_server_2005_express \tab 1\cr
-#' 0235a... \tab 2fa78c8d879b... \tab 2016M01 \tab server_count               \tab 1\cr
-#' 0235a... \tab                 \tab 2016M01 \tab server_count               \tab 1\cr
-#' f50de... \tab 3f00cde0c363e...\tab 2016M01 \tab server_count               \tab 1\cr
-#' f50de... \tab db06dcf2d730c...\tab 2016M01 \tab server_count               \tab 1\cr
-#' f50de... \tab 304af45a698c9...\tab 2016M01 \tab server_count               \tab 1\cr
-#' f50de... \tab f1028cb368849...\tab 2016M01 \tab server_count               \tab 1\cr
-#' f50de... \tab 33ae81ff9bd84...\tab 2016M01 \tab server_count               \tab 1\cr
-#' f50de... \tab 9d9c5222e860c...\tab 2016M01 \tab server_count               \tab 1
-#' }
-#' @section Variables Included:
-#' \tabular{ll}{
-#' \strong{variable} \tab \strong{Notes}\cr
-#' \emph{ db_mysql_51_older_revised } \tab \cr
-#' \emph{ db_mysql_55_revised } \tab \cr
-#' \emph{ db_mysql_56_revised } \tab \cr
-#' \emph{ db_mysql_old } \tab \cr
-#' \emph{ db_mysql_revised } \tab \cr
-#' \emph{ db_postgres_old } \tab \cr
-#' \emph{ db_postgres_revised } \tab \cr
-#' \emph{ db_postgresql_9_revised } \tab \cr
-#' \emph{ db_sql_server_2000_other } \tab \cr
-#' \emph{ db_sql_server_2005_express } \tab \cr
-#' \emph{ db_sql_server_2005_old } \tab \cr
-#' \emph{ db_sql_server_2005_standard } \tab \cr
-#' \emph{ db_sql_server_2008_enterprise_revised } \tab \cr
-#' \emph{ db_sql_server_2008_express_revised } \tab \cr
-#' \emph{ db_sql_server_2008_old_revised } \tab \cr
-#' \emph{ db_sql_server_2008_r2_enterprise_revised } \tab \cr
-#' \emph{ db_sql_server_2008_r2_express_revised } \tab \cr
-#' \emph{ db_sql_server_2008_r2_old_revised } \tab \cr
-#' \emph{ db_sql_server_2008_r2_other_revised } \tab \cr
-#' \emph{ db_sql_server_2008_r2_standard_revised } \tab \cr
-#' \emph{ db_sql_server_2008_standard_revised } \tab \cr
-#' \emph{ db_sql_server_2012_enterprise } \tab \cr
-#' \emph{ db_sql_server_2012_express } \tab \cr
-#' \emph{ db_sql_server_2012_other } \tab \cr
-#' \emph{ db_sql_server_2012_standard } \tab \cr
-#' \emph{ db_sql_server_2014_express } \tab \cr
-#' \emph{ server_count }\tab \cr}
-#' @aliases db_mysql_51_older_revised db_mysql_55_revised db_mysql_56_revised
-#' db_mysql_old db_mysql_revised db_postgres_old db_postgres_revised db_postgresql_9_revised
-#' db_sql_server_2000_other db_sql_server_2005_express db_sql_server_2005_old
-#' db_sql_server_2005_standard db_sql_server_2008_enterprise_revised db_sql_server_2008_express_revised
-#' db_sql_server_2008_old_revised db_sql_server_2008_r2_enterprise_revised
-#' db_sql_server_2008_r2_express_revised db_sql_server_2008_r2_old_revised
-#' db_sql_server_2008_r2_other_revised db_sql_server_2008_r2_standard_revised
-#' db_sql_server_2008_standard_revised db_sql_server_2012_enterprise db_sql_server_2012_express
-#' db_sql_server_2012_other db_sql_server_2012_standard db_sql_server_2014_express WorkloadDB workloaddb
-#' @docType data
-#' @author Jonathan Tooley Associados Lda
-#' @keywords internal
-#' @seealso \code{\link{TAPChunks}}
-NULL
-
-#' @title Test Workload (Ecosystem Edition) data
-#' @name TestWorkloadEcoChunk
-#' @family Test Data
-#' @description
-#' This is an example of a raw Workload (Ecosystem Edition) chunk as we receive them from SpiceWorks. The
-#' data file is limited to 500 records and relates to just one period - 2016M01.
-#' @section File Columns:
-#' \tabular{ll}{
-#' \strong{Column Name} \tab \strong{Description} \cr
-#' \emph{row_id} \tab \cr
-#' \emph{uuid} \tab \cr
-#' \emph{device_os} \tab \cr
-#' \emph{server_roles_uuid} \tab \cr
-#' \emph{virt_provider} \tab \cr
-#' \emph{virt_flag} \tab \cr
-#' \emph{data_type} \tab \cr
-#' \emph{host_id} \tab \cr
-#' \emph{timestamp} \tab \cr
-#' \emph{variable} \tab \cr
-#' \emph{value}\tab \cr}
-#' @section Example Content:
-#' \tabular{llllllrllr}{
-#' \strong{uuid} \tab \strong{device_os} \tab \strong{server_roles_uuid} \tab \strong{virt_provider} \tab \strong{virt_flag} \tab \strong{data_type} \tab \strong{host_id} \tab \strong{timestamp} \tab \strong{variable} \tab \strong{value}\cr
-#' f50de... \tab Windows Server 2012 R2 \tab 3f00cde0c36 \tab Hyper-V     \tab HP \tab VID \tab  45 \tab 2016M01 \tab server_count \tab 1\cr
-#' f50de... \tab Windows Server 2012 R2 \tab db06dcf2d73 \tab msft        \tab V  \tab N   \tab   0 \tab 2016M01 \tab server_count \tab 1\cr
-#' f50de... \tab Windows Server 2012 R2 \tab 304af45a698 \tab Hyper-V     \tab HP \tab VID \tab   7 \tab 2016M01 \tab server_count \tab 1\cr
-#' f50de... \tab Windows Server 2012 R2 \tab f1028cb3688 \tab msft        \tab V  \tab N   \tab   0 \tab 2016M01 \tab server_count \tab 1\cr
-#' f50de... \tab Windows Server 2012 R2 \tab 33ae81ff9bd \tab msft        \tab V  \tab N   \tab   0 \tab 2016M01 \tab server_count \tab 1\cr
-#' f50de... \tab Windows Server 2012 R2 \tab 9d9c5222e86 \tab msft        \tab V  \tab N   \tab   0 \tab 2016M01 \tab server_count \tab 1\cr
-#' ca5d3... \tab VMware ESXi            \tab            \tab VMware ESXi \tab HP \tab VID \tab 228 \tab 2016M01 \tab server_count \tab 1\cr
-#' ca5d3... \tab OracleServer           \tab            \tab vmware      \tab V  \tab N   \tab   0 \tab 2016M01 \tab server_count \tab 3\cr
-#' ca5d3... \tab Windows Server 2012 R2 \tab 508ae077a8a\tab VMware ESXi \tab V  \tab VID \tab  80 \tab 2016M01 \tab server_count \tab 1
-#' }
-#' @section Variables Included:
-#' This file only contains server counts and so does not have a list of product columns.
-#' @aliases WorkloadEco workloadeco
-#' @docType data
-#' @author Jonathan Tooley Associados Lda
-#' @keywords internal
-#' @seealso \code{\link{TAPChunks}}
-NULL
-
-#' @title Test Workload (Hardware Edition) data
-#' @name TestWorkloadHWChunk
-#' @family Test Data
-#' @description
-#' This is an example of a raw Workload (Hardware Edition) chunk as we receive them from SpiceWorks. The
-#' data file is limited to 500 records and relates to just one period - 2016M01.
-#' @section File Columns:
-#' \tabular{ll}{
-#' \strong{Column Name} \tab \strong{Description} \cr
-#' \emph{row_id} \tab \cr
-#' \emph{uuid} \tab \cr
-#' \emph{device_os} \tab \cr
-#' \emph{storage_gb} \tab \cr
-#' \emph{cpu_class} \tab \cr
-#' \emph{form_factor} \tab \cr
-#' \emph{memory} \tab \cr
-#' \emph{cpu_manu} \tab \cr
-#' \emph{oem} \tab \cr
-#' \emph{server_roles_uuid} \tab \cr
-#' \emph{virt_provider} \tab \cr
-#' \emph{virt_flag} \tab \cr
-#' \emph{data_type} \tab \cr
-#' \emph{host_id} \tab \cr
-#' \emph{physical_cpu} \tab \cr
-#' \emph{cores_per_cpu} \tab \cr
-#' \emph{timestamp} \tab \cr
-#' \emph{variable} \tab \cr
-#' \emph{value}\tab \cr}
-#' @section Example Content:
-#' \tabular{llllllllllllrrrllr}{
-#' \strong{uuid} \tab \strong{device_os} \tab \strong{storage_gb} \tab \strong{cpu_class} \tab \strong{form_factor} \tab \strong{memory} \tab \strong{cpu_manu} \tab \strong{oem} \tab \strong{server_roles_uuid} \tab \strong{virt_provider} \tab \strong{virt_flag} \tab \strong{data_type} \tab \strong{host_id} \tab \strong{physical_cpu} \tab \strong{cores_per_cpu} \tab \strong{timestamp} \tab \strong{variable} \tab \strong{value}\cr
-#' 0235a... \tab Windows Server 2012 R2 \tab 1 - 500      \tab NonServer \tab S \tab 1to8    \tab Intel \tab N/A      \tab 2fa78c8d \tab vmware  \tab V  \tab N   \tab  0 \tab 2 \tab 4 \tab 2016M01 \tab server_count \tab 1\cr
-#' 0235a... \tab Windows SBS 2003       \tab 1 - 500      \tab Server    \tab S \tab 1to8    \tab Intel \tab dell     \tab          \tab         \tab P  \tab N   \tab  0 \tab 2 \tab 4 \tab 2016M01 \tab server_count \tab 1\cr
-#' f50de... \tab Windows Server 2012 R2 \tab 4001 - 10000 \tab Server    \tab S \tab 17 - 32 \tab Intel \tab hp       \tab 3f00cde0 \tab Hyper-V \tab HP \tab VID \tab 45 \tab 2 \tab 4 \tab 2016M01 \tab server_count \tab 1\cr
-#' f50de... \tab Windows Server 2012 R2 \tab 1001 - 4000  \tab Server    \tab S \tab 1to8    \tab Intel \tab N/A      \tab db06dcf2 \tab msft    \tab V  \tab N   \tab  0 \tab 2 \tab 4 \tab 2016M01 \tab server_count \tab 1\cr
-#' f50de... \tab Windows Server 2012 R2 \tab 1001 - 4000  \tab NonServer \tab S \tab 1to8    \tab Intel \tab gigabyte \tab 304af45a \tab Hyper-V \tab HP \tab VID \tab  7 \tab 1 \tab 2 \tab 2016M01 \tab server_count \tab 1\cr
-#' f50de... \tab Windows Server 2012 R2 \tab 1 - 500      \tab Server    \tab S \tab 1to8    \tab Intel \tab N/A      \tab f1028cb3 \tab msft    \tab V  \tab N   \tab  0 \tab 2 \tab 4 \tab 2016M01 \tab server_count \tab 1\cr
-#' f50de... \tab Windows Server 2012 R2 \tab 1 - 500      \tab Server    \tab S \tab 1to8    \tab Intel \tab N/A      \tab 33ae81ff9\tab msft    \tab V  \tab N   \tab  0 \tab 2 \tab 4 \tab 2016M01 \tab server_count \tab 1\cr
-#' f50de... \tab Windows Server 2012 R2 \tab 1 - 500      \tab Server    \tab S \tab 1to8    \tab Intel \tab N/A      \tab 9d9c5222e\tab msft    \tab V  \tab N   \tab  0 \tab 1 \tab 4 \tab 2016M01 \tab server_count \tab 1\cr
-#' 5bfd2... \tab Windows Server 2008 FE \tab 1001 - 4000  \tab Server    \tab S \tab 1to8    \tab Intel \tab hp       \tab 95220072b\tab         \tab P  \tab N   \tab  0 \tab 1 \tab 4 \tab 2016M01 \tab server_count \tab 1
-#' }
-#' @section Variables Included:
-#' This file only contains server counts and so does not have a list of product columns.
-#' @aliases WorkloadHW workloadhw
-#' @docType data
-#' @author Jonathan Tooley Associados Lda
-#' @keywords internal
-#' @seealso \code{\link{TAPChunks}}
-NULL
-
-#' @title Test Workload (Network Edition) data
-#' @name TestWorkloadNChunk
-#' @family Test Data
-#' @description
-#' This is an example of a raw Workload (Network Edition) chunk as we receive them from SpiceWorks. The
-#' data file is limited to 500 records and relates to just one period - 2016M01.
-#' @section File Columns:
-#' \tabular{ll}{
-#' \strong{Column Name} \tab \strong{Description} \cr
-#' \emph{row_id} \tab \cr
-#' \emph{uuid} \tab \cr
-#' \emph{device_os} \tab \cr
-#' \emph{server_roles_uuid} \tab \cr
-#' \emph{virt_provider} \tab \cr
-#' \emph{virt_flag} \tab \cr
-#' \emph{data_type} \tab \cr
-#' \emph{host_id} \tab \cr
-#' \emph{timestamp} \tab \cr
-#' \emph{variable} \tab \cr
-#' \emph{value}\tab \cr}
-#' @section Example Content:
-#' \tabular{llllllrllr}{
-#' \strong{uuid} \tab \strong{device_os} \tab \strong{server_roles_uuid} \tab \strong{virt_provider} \tab \strong{virt_flag} \tab \strong{data_type} \tab \strong{host_id} \tab \strong{timestamp} \tab \strong{variable} \tab \strong{value}\cr
-#' 0235a... \tab Windows Server 2012 R2 \tab 2fa78c8d879bfee\tab vmware \tab V \tab N \tab 0 \tab 2016M01 \tab server_count \tab 1\cr
-#' 0235a... \tab Windows SBS 2003       \tab                \tab        \tab P \tab N \tab 0 \tab 2016M01 \tab server_count \tab 1\cr
-#' f50de... \tab Windows Server 2012 R2 \tab db06dcf2d730cea\tab msft   \tab V \tab N \tab 0 \tab 2016M01 \tab server_count \tab 1\cr
-#' f50de... \tab Windows Server 2012 R2 \tab f1028cb368849dc\tab msft   \tab V \tab N \tab 0 \tab 2016M01 \tab server_count \tab 1\cr
-#' f50de... \tab Windows Server 2012 R2 \tab 33ae81ff9bd8495\tab msft   \tab V \tab N \tab 0 \tab 2016M01 \tab server_count \tab 1\cr
-#' f50de... \tab Windows Server 2012 R2 \tab 9d9c5222e860c3f\tab msft   \tab V \tab N \tab 0 \tab 2016M01 \tab server_count \tab 1\cr
-#' 5bfd2... \tab Windows Server 2008 FE \tab 95220072b458323\tab        \tab P \tab N \tab 0 \tab 2016M01 \tab server_count \tab 1\cr
-#' ca5d3... \tab OracleServer           \tab                \tab vmware \tab V \tab N \tab 0 \tab 2016M01 \tab server_count \tab 3\cr
-#' ca5d3... \tab Windows Server 2008 R2 \tab 22aa13dbbb22bd4\tab vmware \tab V \tab N \tab 0 \tab 2016M01 \tab server_count \tab 1
-#' }
-#' @section Variables Included:
-#' This file only contains server counts and so does not have a list of product columns.
-#' @aliases WorkloadN workloadn
-#' @docType data
-#' @author Jonathan Tooley Associados Lda
-#' @keywords internal
-#' @seealso \code{\link{TAPChunks}}
-NULL
-
-#' @title Test Workload (VID Edition) data
-#' @name TestWorkloadVIDChunk
-#' @family Test Data
-#' @description
-#' This is an example of a raw Workload (VID Edition) chunk as we receive them from SpiceWorks. The
-#' data file is limited to 500 records and relates to just one period - 2016M01.
-#' @section File Columns:
-#' \tabular{ll}{
-#' \strong{Column Name} \tab \strong{Description} \cr
-#' \emph{row_id} \tab \cr
-#' \emph{uuid} \tab \cr
-#' \emph{device_os} \tab \cr
-#' \emph{server_roles_uuid} \tab \cr
-#' \emph{virt_provider} \tab \cr
-#' \emph{virt_flag} \tab \cr
-#' \emph{data_type} \tab \cr
-#' \emph{host_id} \tab \cr
-#' \emph{timestamp} \tab \cr
-#' \emph{variable} \tab \cr
-#' \emph{value}\tab \cr}
-#' @section Example Content:
-#' \tabular{llllllrllr}{
-#' \strong{uuid} \tab \strong{device_os} \tab \strong{server_roles_uuid} \tab \strong{virt_provider} \tab \strong{virt_flag} \tab \strong{data_type} \tab \strong{host_id} \tab \strong{timestamp} \tab \strong{variable} \tab \strong{value}\cr
-#' f50de... \tab Windows Server 2012 R2 \tab 3f00cde0c363e5\tab Hyper-V     \tab HP \tab VID \tab  45 \tab 2016M01 \tab server_count \tab 1\cr
-#' f50de... \tab Windows Server 2012 R2 \tab 304af45a698c98\tab Hyper-V     \tab HP \tab VID \tab   7 \tab 2016M01 \tab server_count \tab 1\cr
-#' ca5d3... \tab VMware ESXi            \tab               \tab VMware ESXi \tab HP \tab VID \tab 228 \tab 2016M01 \tab server_count \tab 1\cr
-#' ca5d3... \tab Windows Server 2012 R2 \tab 508ae077a8a5f4\tab VMware ESXi \tab V  \tab VID \tab  80 \tab 2016M01 \tab server_count \tab 1\cr
-#' ca5d3... \tab Windows Server 2012 R2 \tab 1428bc13cdff43\tab VMware ESXi \tab V  \tab VID \tab  80 \tab 2016M01 \tab server_count \tab 1\cr
-#' ca5d3... \tab Windows Server 2012 R2 \tab 688aaef017d10d\tab VMware ESXi \tab V  \tab VID \tab  80 \tab 2016M01 \tab server_count \tab 1\cr
-#' ca5d3... \tab VMware ESXi            \tab               \tab VMware ESXi \tab HP \tab VID \tab  80 \tab 2016M01 \tab server_count \tab 1\cr
-#' ca5d3... \tab Windows Server 2008 R2 \tab 512ed32db63a8e\tab VMware ESXi \tab V  \tab VID \tab  80 \tab 2016M01 \tab server_count \tab 1\cr
-#' ba8f7... \tab VMware ESXi            \tab               \tab VMware ESXi \tab HP \tab VID \tab 581 \tab 2016M01 \tab server_count \tab 1
-#' }
-#' @section Variables Included:
-#' This file only contains server counts and so does not have a list of product columns.
-#' @aliases WorkloadVID workloadvid
-#' @docType data
-#' @author Jonathan Tooley Associados Lda
-#' @keywords internal
-#' @seealso \code{\link{TAPChunks}}
-NULL
-
-#' @title Test Workload (WL Edition) data
-#' @name TestWorkloadWLChunk
-#' @family Test Data
-#' @description
-#' This is an example of a raw Workload (WL Edition) chunk as we receive them from SpiceWorks. The
-#' data file is limited to 500 records and relates to just one period - 2016M01.
-#' @section File Columns:
-#' \tabular{ll}{
-#' \strong{Column Name} \tab \strong{Description} \cr
-#' \emph{row_id} \tab \cr
-#' \emph{uuid} \tab \cr
-#' \emph{device_os} \tab \cr
-#' \emph{server_roles_uuid} \tab \cr
-#' \emph{virt_provider} \tab \cr
-#' \emph{virt_flag} \tab \cr
-#' \emph{data_type} \tab \cr
-#' \emph{host_id} \tab \cr
-#' \emph{timestamp} \tab \cr
-#' \emph{variable} \tab \cr
-#' \emph{value}\tab \cr}
-#' @section Example Content:
-#' \tabular{llllllrllr}{
-#' \strong{uuid} \tab \strong{device_os} \tab \strong{server_roles_uuid} \tab \strong{virt_provider} \tab \strong{virt_flag} \tab \strong{data_type} \tab \strong{host_id} \tab \strong{timestamp} \tab \strong{variable} \tab \strong{value}\cr
-#' 0235a... \tab Windows SBS 2003       \tab         \tab        \tab P \tab N \tab 0 \tab 2016M01 \tab app_dev_deployment   \tab 1\cr
-#' 0235a... \tab Windows SBS 2003       \tab         \tab        \tab P \tab N \tab 0 \tab 2016M01 \tab collaborative_apps   \tab 2\cr
-#' 0235a... \tab Windows SBS 2003       \tab         \tab        \tab P \tab N \tab 0 \tab 2016M01 \tab security             \tab 1\cr
-#' 0235a... \tab Windows SBS 2003       \tab         \tab        \tab P \tab N \tab 0 \tab 2016M01 \tab msft_exchange        \tab 2\cr
-#' 0235a... \tab Windows Server 2012 R2 \tab 2fa78c8d\tab vmware \tab V \tab N \tab 0 \tab 2016M01 \tab server_count         \tab 1\cr
-#' 0235a... \tab Windows SBS 2003       \tab         \tab        \tab P \tab N \tab 0 \tab 2016M01 \tab server_count         \tab 1\cr
-#' f50de... \tab Windows Server 2012 R2 \tab db06dcf2\tab msft   \tab V \tab N \tab 0 \tab 2016M01 \tab app_dev_deployment   \tab 1\cr
-#' f50de... \tab Windows Server 2012 R2 \tab 33ae81ff\tab msft   \tab V \tab N \tab 0 \tab 2016M01 \tab app_dev_deployment   \tab 1\cr
-#' f50de... \tab Windows Server 2012 R2 \tab db06dcf2\tab msft   \tab V \tab N \tab 0 \tab 2016M01 \tab authoring_publishing \tab 1
-#' }
-#' @section Variables Included:
-#' \tabular{ll}{
-#' \strong{variable} \tab \strong{Notes}\cr
-#' \emph{ app_dev_deployment } \tab \cr
-#' \emph{ authoring_publishing } \tab \cr
-#' \emph{ collaborative_apps } \tab \cr
-#' \emph{ engineering } \tab \cr
-#' \emph{ msft_exchange } \tab \cr
-#' \emph{ msft_lync } \tab \cr
-#' \emph{ msft_sharepoint } \tab \cr
-#' \emph{ os_and_storage_sw } \tab \cr
-#' \emph{ other_db_and_bi } \tab \cr
-#' \emph{ security } \tab \cr
-#' \emph{ server_count } \tab \cr
-#' \emph{ system_infrastructure_network_mgmt }\tab \cr}
-#' @aliases app_dev_deployment authoring_publishing collaborative_apps engineering
-#' msft_exchange msft_lync msft_sharepoint os_and_storage_sw
-#' other_db_and_bi security system_infrastructure_network_mgmt WorkloadWL workloadwl
-#' @docType data
-#' @author Jonathan Tooley Associados Lda
-#' @keywords internal
-#' @seealso \code{\link{TAPChunks}}
-NULL
-
-#' @title Test CCM Cost Data
-#' @name TestCCMCostChunk
-#' @family Test Data
-#' @description
-#' This is an example of a raw CCM Cost chunk as we receive them from SpiceWorks. The
-#' data file is limited to 500 records and relates to just one period - 2017M01
-#' @section File Columns:
-#' \tabular{ll}{
-#' \strong{Column Name} \tab \strong{Description} \cr
-#' \emph{uuid} \tab \cr
-#' \emph{platform} \tab \cr
-#' \emph{service} \tab \cr
-#' \emph{resource_type} \tab \cr
-#' \emph{cost} \tab \cr
-#' \emph{timestamp} \tab \cr
-#' \emph{row_id} \tab \cr
-#' \emph{NoProd}\tab \cr}
-#' @section Example Content:
-#' \tabular{llllrll}{
-#' \strong{uuid} \tab \strong{platform} \tab \strong{service} \tab \strong{resource_type} \tab \strong{cost} \tab \strong{timestamp} \tab \strong{NoProd}\cr
-#' d3a89... \tab Azure \tab Networking        \tab Microsoft.Network/publicIPAddresses \tab   0.00 \tab 2017M01 \tab NA\cr
-#' d3a89... \tab Azure \tab Security Center   \tab microsoft.security/pricingtiers     \tab   0.00 \tab 2017M01 \tab NA\cr
-#' d3a89... \tab Azure \tab Recovery Services \tab Microsoft.RecoveryServices/vaults   \tab  25.05 \tab 2017M01 \tab NA\cr
-#' d3a89... \tab Azure \tab Storage           \tab Microsoft.RecoveryServices/vaults   \tab 145.30 \tab 2017M01 \tab NA\cr
-#' d3a89... \tab Azure \tab Storage           \tab Microsoft.Storage/storageAccounts   \tab 285.34 \tab 2017M01 \tab NA\cr
-#' d3a89... \tab Azure \tab Data Management   \tab Microsoft.Storage/storageAccounts   \tab   2.37 \tab 2017M01 \tab NA\cr
-#' d3a89... \tab Azure \tab Networking        \tab Microsoft.Storage/storageAccounts   \tab   0.07 \tab 2017M01 \tab NA\cr
-#' d3a89... \tab Azure \tab Networking        \tab Microsoft.Compute/virtualMachines   \tab   2.51 \tab 2017M01 \tab NA\cr
-#' d3a89... \tab Azure \tab Virtual Machines  \tab Microsoft.Compute/virtualMachines   \tab 282.10 \tab 2017M01 \tab NA
-#' }
-#' @aliases CCMCost
-#' @docType data
-#' @author Jonathan Tooley Associados Lda
-#' @keywords internal
-#' @seealso \code{\link{TAPChunks}}
-NULL
-
-#' @title Test CCM Usage Data
-#' @name TestCCMUsageChunk
-#' @family Test Data
-#' @description
-#' This is an example of a raw CCM Usage chunk as we receive them from SpiceWorks. The
-#' data file is limited to 500 records and relates to just one period - 2017M01
-#' @section File Columns:
-#' \tabular{ll}{
-#' \strong{Column Name} \tab \strong{Description} \cr
-#' \emph{uuid} \tab \cr
-#' \emph{platform} \tab \cr
-#' \emph{service} \tab \cr
-#' \emph{resource_type} \tab \cr
-#' \emph{os} \tab \cr
-#' \emph{region} \tab \cr
-#' \emph{metric} \tab \cr
-#' \emph{value} \tab \cr
-#' \emph{unit} \tab \cr
-#' \emph{timestamp} \tab \cr
-#' \emph{row_id} \tab \cr
-#' \emph{NoProd}\tab \cr}
-#' @section Example Content:
-#' \tabular{lllllllllll}{
-#' \strong{uuid} \tab \strong{platform} \tab \strong{service} \tab \strong{resource_type} \tab \strong{os} \tab \strong{region} \tab \strong{metric} \tab \strong{value} \tab \strong{unit} \tab \strong{timestamp} \tab \strong{NoProd}\cr
-#' 93a3b... \tab Azure \tab Data Services \tab Microsoft.Sql/servers/databases          \tab  \tab australiaeast \tab Data Services - Basic Database Days - SQL Database              \tab 792      \tab Hours     \tab 2017M01 \tab NA\cr
-#' 93a3b... \tab Azure \tab Storage       \tab Microsoft.Storage/storageAccounts        \tab  \tab australiaeast \tab Storage - Standard IO - Table (GB) - Locally Redundant          \tab 7.20E-05 \tab GB        \tab 2017M01 \tab NA\cr
-#' 93a3b... \tab Azure \tab Storage       \tab Microsoft.Storage/storageAccounts        \tab  \tab australiaeast \tab Storage - Standard IO - Hot Block Blob (GB) - Locally Redundant \tab 0.00012  \tab GB        \tab 2017M01 \tab NA\cr
-#' 93a3b... \tab Azure \tab Storage       \tab Microsoft.ClassicStorage/storageAccounts \tab  \tab australiaeast \tab Storage - Standard IO - Page Blob/Disk (GB) - Geo Redundant     \tab 1.742206 \tab GB        \tab 2017M01 \tab NA\cr
-#' 65163... \tab Azure \tab Networking    \tab Microsoft.ClassicNetwork/virtualNetworks \tab  \tab westeurope    \tab Networking - Virtual Network                                    \tab TRUE     \tab Existence \tab 2017M01 \tab NA\cr
-#' 65163... \tab Azure \tab Networking    \tab Microsoft.Network/virtualNetworks        \tab  \tab eastus        \tab Networking - Virtual Network                                    \tab TRUE     \tab Existence \tab 2017M01 \tab NA\cr
-#' 65163... \tab Azure \tab Storage       \tab Microsoft.Storage/storageAccounts        \tab  \tab eastus        \tab Storage - Standard IO - Page Blob/Disk (GB) - Locally Redundant \tab 0.33392  \tab GB        \tab 2017M01 \tab NA\cr
-#' 65163... \tab Azure \tab Storage       \tab Microsoft.Storage/storageAccounts        \tab  \tab eastus        \tab Storage - Standard IO - Table (GB) - Locally Redundant          \tab 4.80E-05 \tab GB        \tab 2017M01 \tab NA\cr
-#' 65163... \tab Azure \tab Data Services \tab Microsoft.Sql/servers/databases          \tab  \tab westeurope    \tab Data Services - Standard S1 Database Days - SQL Database        \tab 350      \tab Hours     \tab 2017M01 \tab NA
-#' }
-#' @aliases CCMUsage
-#'
-#' @docType data
-#' @author Jonathan Tooley Associados Lda
-#' @keywords internal
-#' @seealso \code{\link{TAPChunks}}
-NULL
-
-
-
-
+#' @export
+.onLoad <- function(libname, pkgname){
+  packageStartupMessage(paste('Welcome to TAPChunks version:', packageVersion("TAPChunks")))
+  packageStartupMessage("For more information please type '?TAPChunks'. or visit the on-line manual at")
+  packageStartupMessage("http://portalsbi/sites/marketresearch/Shared%20Documents/TAP/TAPChunks.html")
+  #UpdateTAPChunks()
+}

@@ -4,30 +4,217 @@
 \alias{RunIPF}
 \title{Run an Iterative Proportional Fit}
 \usage{
-RunIPF(M, target, maxiter = 25, tolerance = 1e-06)
+RunIPF(Data, ..., ReplaceZeros = 0, Maxiter = 25, Tolerance = 1e-06)
 }
 \arguments{
-\item{M}{A multidimensional array (or matrix) containing the seed for the IPF.}
+\item{Data}{A multidimensional array containing the seed for the IPF. This multidimensional
+array should be produced using the \code{\link{PrepareIPF}} function.  It is important that the array
+has names. Each individual dimension must have a name and the members of the dimensions must also
+have names.}
 
-\item{target}{A set of targets, one for each dimension, that the resulting array
-will conform to.}
+\item{...}{In addition to the seed the IPF will need to receive targets which are passed to the
+function as a series of parameters.  These targets must also be arrays and should also be prepared using
+\code{\link{PrepareIPF}} . It is common to supply a one dimensional target array for each of the
+dimensions of the IPF but it is not necessary to restict targets to one dimension.
+Targets can also be multidimensional arrays.  The user can submit any number of targets.}
 
-\item{maxiter}{The maximum number of iterations that the function will attempt
+\item{ReplaceZeros}{This parameter defines the value that will be used to replace
+and empty or zero values found in the seed. If this is not specified the default is zero.}
+
+\item{Maxiter}{The maximum number of iterations that the function will attempt (without convergence)
 before stopping work.  If this is not specified the default is 25.}
 
-\item{tolerance}{How close the function needs to get to the targets before it
-declares that convergence has happened.}
+\item{Tolerance}{This function is used in a variety of places to control the IPF:
+\itemize{
+\item The function checks that the values in each target must be similar in value. Specifically each
+target is compared to all the other submitted targets. The absolute value of each of the differences
+between targets must be below the value defined in Tolerance.
+\item Targets can have overlapping dimensions and when this happens the function will look at
+all of the cell coordinates in the overlap and compare them.  The absolute value of the differences
+between cells in the target overlap must be below the value defined in Tolerance.
+\item Tolerance is also used in the definition of convergence.  Convergence criteria are discussed in
+more detail below.
+}
+If the user does not supply a value for Tolerance the default is 0.000001.}
 }
 \description{
 Function to take an n-dimensional array and fit it to a set of
-target vectors.
+target arrays.
 }
+\details{
+Iterative Proportional Fitting ("IPF"), sometimes referred to as \emph{Raking}, is a procedure for
+adjusting a table of data cells such that they add up to selected totals for both the columns
+and rows (in the two-dimensional case) of the table. The procedure will also scale to any number of
+dimensions. The unadjusted data cells may be referred to as the \emph{seed} cells, and the selected totals
+may be referred to as the \emph{target} (or Marginal) values.
+
+\if{html}{\figure{IPF.jpg}{options: width="30\%" alt="Figure: IPF.jpg"}}
+\if{latex}{\figure{IPF.pdf}{options: width="3in" alt="Figure: IPF.pdf"}}
+}
+\section{Validate the seed format}{
+
+The first operation undertaken by the function is to validate the seed array passed to the Data
+parameter. These are the requirements checked: \itemize{
+\item The data must be submitted as an array.
+\item The data must have more than one dimension.
+\item The dimensions in the data must have more than one member. For example, a two dimensional
+array of size n by m could also be submitted as an object of three dimensions of size n by m by 1.
+This extra dimension is clearly redundant as it does not change the data at all and so any dimensions
+of size 1 will be rejected.
+\item The dimensions of the array must all be named so the system can match up the dimensions in
+the seed and the targets.
+\item The members of each dimension must all be named so the system can check that dimensions are
+consistent from seed to target and are all complete.
+\item The cell values must be positive numbers or empty cells (Marked with NA by the system).}
+}
+
+\section{Validate the target formats}{
+
+The targets submitted are also validated by the system: \itemize{
+\item The targets must also be arrays.
+\item There must be at least two targets submitted to the function.
+\item The targets' values must be positive numbers.
+\item Unlike the seed, the targets must not have any empty cells.}
+}
+
+\section{Check targets reconcile}{
+
+Each target can have its cells summed to a total and this total must be the same for each target.
+Because of inaccuracy in number representation the system will compare each target with every other
+target and compare the differences with the Tolerance parameter.  All the differences between the
+targets must be below Tolerance for the targets to be accepted.
+}
+
+\section{Check seed dimensions are represented in the targets}{
+
+The seed will have a set of dimensions and all of these will need a target.  The targets together
+must represent every dimension in the seed at least once. Targets can overlap and it is not a problem
+to have a dimension represented in more than one target, although this will trigger further consistency tests. \cr\cr
+The system will also test that the targets don't have dimensions that are not in the seed.
+}
+
+\section{Check all members of target dimensions are present}{
+
+Having checked that the union of the targets' dimensions is the same as the seed's dimensions the system will
+validate the members of those dimensions.  The members of each dimension, as listed in the seed, are compared
+to the members of the same dimension, as listed in the targets. Every member in the seed must be in the
+targets' dimension and, conversely, the targets' dimensions must not refer to a member that is not in the seed.
+}
+
+\section{Ensure target dimension members are aligned with the seed}{
+
+The IPF calculations are optimized for speed by removing the need to constantly link seed cells to target cells
+by name. The mechanism for doing this is to sort the target data into exactly the same order as the seed data.
+This allows the system to superimpose dataset on top of one another and make direct calculations.
+}
+
+\section{Analyse targets for overlaps}{
+
+Targets may be completely orthogonal; this means that an n dimensional seed will have n targets of one dimension, but
+this is not necessarily the case. Targets may overlap across one or many dimensions. Consider this example: \cr\cr
+\preformatted{
+Seed Dimensions:      {Geography, Operating System, Product, Segment}
+Target One Dimensions:{Geography, Operating System,          Segment}
+Target Two Dimensions:{Geography,                   Product, Segment}
+}
+In this case we have a 4D seed and two 3D targets. Because the union of the target sets is the same 4D
+set as the seed this will converge (assuming the seed data is not scarce) providing the targets don't
+contradict. To test this the function will consider the intersection of the targets which is a 2D plane
+with Geography and Segment data. In order to check consistency, the data in the 3D targets is projected
+onto the 2D plane and the resulting two planes are compared. The function ensures that every cell in the
+2D overlap plane is the same in the projections from both targets.
+}
+
+\section{Data cleaning}{
+
+The seed may contain blank cells but these will now be replaced by zero numbers. This is done so that the
+seed is homogenous and only has positive numbers or zeros. The function has a parameter \emph{ReplaceZeros}
+and if the user has passed a positive number to this parameter the value is used to replace all the zeros in
+the seed.
+}
+
+\section{Report on data scarcity}{
+
+If the user has not opted to replace zeros then the data in the seed may be scarce. In order to guide the
+user the function will now report on the scarcity. It does this by projecting the seed onto each dimension
+in turn and it reports three metrics: \itemize{
+\item It will report how many of the dimension's members have at least one zero or empty cell.
+\item It then calculates, for each member of the dimension, the percentage of zero cells and reports the
+minimum and maximum percentages found on the dimension.}
+Here is an example: \cr
+\preformatted{
+- Data Dimension database has zero or blank values in 9 of 9 members.
+- The incidence of zero or blank members ranges from 0.46 % to 28.70 %
+- Data Dimension OS.id has zero or blank values in 8 of 8 members.
+- The incidence of zero or blank members ranges from 4.94 % to 20.58 %
+- Data Dimension variable has zero or blank values in 3 of 3 members.
+- The incidence of zero or blank members ranges from 15.28 % to 15.28 %
+- Data Dimension country.id has zero or blank values in 27 of 27 members.
+- The incidence of zero or blank members ranges from 1.39 % to 50.00 %
+}
+}
+
+\section{Run the IPF}{
+
+The system will now start to iterate the seed to fit the data to the targets in turn.
+As the iterations happen the system will report the status with reducing frequency. It
+reports the first ten iterations and then reports every tenth iteration until iteration 100 when
+it reports every hundredth and so on. \cr
+Here is an example of a 4D seed being fitted to 2 targets. The report shows, for each iteration,
+a number for each target submitted. The value shown is formed by summing the seed over the target's
+dimensions and calculating the difference between summed seed and the target.  This difference is
+itself a multidimensional array and, in order to present the difference as one number, the cells are squared,
+averaged and then the square root taken.
+\preformatted{
+- 4 dimensional array submitted.
+-    : { database,OS.id,variable,country.id }
+- Root mean square error [Iteration:     1] { 309027.031,263745.041 }
+- Root mean square error [Iteration:     2] { 25555.726,18885.891 }
+- Root mean square error [Iteration:     3] { 3154.598,3211.195 }
+- Root mean square error [Iteration:     4] { 632.098,734.602 }
+- Root mean square error [Iteration:     5] { 159.844,201.340 }
+- Root mean square error [Iteration:     6] { 46.948,62.417 }
+- Root mean square error [Iteration:     7] { 15.245,21.053 }
+- Root mean square error [Iteration:     8] { 5.297,7.526 }
+- Root mean square error [Iteration:     9] { 1.927,2.803 }
+- Root mean square error [Iteration:    10] { 0.725,1.076 }
+- Root mean square error [Iteration:    20] { 0.000,0.000 }
+Success:
+  - converged after  24 iterations.
+}
+}
+
+\section{Convergence criteria}{
+
+In the above report we saw that the system calculates the Root Mean Squared ("RMS") error when the
+seed is compared to each target after every iteration. This calculation forms one part of
+convergence testing. Here are the two criteria: \itemize{
+\item The RMS for each target must be less than the value in Tolerance. This ensures that the
+IPF has found solutions where the seed's margin agrees to each target. This is not quite sufficient
+to claim convergence, however. Each iteration comprises a set of sub-iterations, one for each target.
+A situation can arise where the seed oscillates between different states between sub-iterations but
+returns to the same state at the end of the iteration. This can make all the RMS values
+(which are calculated at sub-iteration ends) acceptable but there may not be one single unique solution.
+Instead there are n solutions, where n is the number of targets.
+\item To detect oscillations the system measures the change in the seed from one sub-iteration to the next
+and convergence is only claimed when there is no movement between sub-iterations as well as between iterations.
+}
+}
+
+\section{Non Convergence}{
+
+If the function completes the same number of iterations as MaxIter then convergence has not happened and the
+system will stop and will warn about non-convergence. When this happens the function returns the result as
+at the last iteration.  This will allow you to continue further iterations without having to repeat what
+was done before. Simply return the output back to the RunIPF function as the next seed with the same targets.
+}
+
 \seealso{
 \code{\link{TAPChunks}}
 
-Other Iterative Proportional Fitting Tools: \code{\link{PrepareIPF}},
-  \code{\link{SetTargets}}
+Other Modeling Tools: \code{\link{PrepareIPF}}
 }
 \author{
 JTA - The Data Scientists
 }
+\concept{Modeling Tools}

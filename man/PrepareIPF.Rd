@@ -4,25 +4,36 @@
 \alias{PrepareIPF}
 \title{Preparing data for IPF}
 \usage{
-PrepareIPF(data = NULL, dimensions = NULL, metric = NULL, order = FALSE)
+PrepareIPF(Data, Dimensions, Metric, Order = FALSE)
 }
 \arguments{
-\item{data}{This can be a data table, a data frame or an array.  When the user presents a data table or data frame the system returns
-an array in a format that is ready for the IPF function.  When the user presents an array the system returns a data table.}
+\item{Data}{This can be a data table, a data frame or an array.  When the user presents a data table or data frame the system returns
+an array in a format that is ready for the IPF function.  When the user presents an array the system returns a data table. This means
+that this function can be used twice in a typical IPF workflow.  The first time converts a chunk of data
+to a multi-dimensional array for the IPF function.  The IPF returns an array which can be submitted to
+this function a second time to return the data to a chunk format.}
 
-\item{dimensions}{A vector of dimension names to include in the analysis}
+\item{Dimensions}{A vector of dimension names to include in the analysis. If this is not supplied the function
+will look in the file to see which columns can be used for dimensions and will include them all.}
 
-\item{metric}{A calculation to be employed to generate the values which will be submitted to the analysis}
-}
-\value{
-When the user submits a data frame or a data table the function returns an array.  When the user submits an array the system
-returns a data table.
+\item{Metric}{A calculation to be employed to generate the values which will be submitted to the analysis. If
+the user does not provide this information the system will take the first numeric column that it finds
+as the metric to be used in the IPF.}
+
+\item{Order}{If this is set to True the function will print a list of members in each dimension in the
+order in which it will appear in the array.}
 }
 \description{
 The mathematics of running an Iterative Proportional Fit are not hard
 to do but the problem needs to be properly set up.  The data that is sent to IPF tools
 such as \code{\link{RunIPF}} has many strict requirements and this function ensures that
 data is properly formatted for IPF.
+}
+\details{
+The underlying premise of this function is to convert from a data table format to an array
+and back again. When we run an IPF both the seed and the targets are presented as multi-dimensional
+arrays but we typically get the data from a data table.  The function will perform this transformation
+for you. It will also transform a multidimensional array back into a data table.
 }
 \section{Introduction}{
 
@@ -48,42 +59,227 @@ format.
 
 \section{Data Format}{
 
+As we have mentioned above the function can convert from a tabular format to an array or from an array to a tabular format. The typical
+workflow in preparing an IPF is to take data in a table, either as a TAP Chunk or as a data table, and to prepare
+multidimensional arrays to present to the Iterative Proportional Fit ("IPF") tool \code{\link{RunIPF}}. The output from the IPF tool is
+another multidimensional array which can be submitted to this function to return the output back into a table. \cr\cr
+\strong{CONVERTING FROM A TABLE TO AN ARRAY}
 }
 
 \section{Analysing Dimensions}{
 
+The first step in converting from a table to an array is an analysis of the dimensions that appear to be available
+in the submitted table. The function will consider all the columns that are in the submitted table. Any columns that
+contain either characters or factors will be considered to be appropriate for use as a dimension. If the data does not
+have any character or factor columns the function will end with an error message.  During the analysis
+the function will note if columns containing factors have a custom sort order defined. Ordered factors will retain
+their custom sort.  Non ordered factors will be sorted alphabetically as will character columns. \cr\cr
+Here are some examples that you can run to see the dimension analysis phase: \cr\cr
+\emph{Data with ordered factors} \cr
+\preformatted{
+a <- PrepareIPF(esoph)
+- Data frame submitted.
+- Analysing Dimensions:
+  - Discovered 3 possible dimensions.
+-    : { agegp,alcgp,tobgp }
+-    : { 6,4,4 }
+- The number of possible array coordinates is 96
+}
+\emph{Data with unordered factors} \cr
+\preformatted{
+a <- PrepareIPF(TestClientChunk)
+- Data table submitted.
+- Analysing Dimensions:
+- Discovered 5 possible dimensions.
+-    : { oem,form_factor,os_name,timestamp,variable }
+-    : { 7,2,4,1,29 }
+- The number of possible array coordinates is 1624
+- Discovered 5 factors that are not ordered.
+-    : { oem,form_factor,os_name,timestamp,variable }
+- These will be ordered for you.
+}
 }
 
 \section{Defining Dimensions}{
 
+The previous step found the set of columns that could be used to define dimensions. You may not
+wish to submit all of the dimensions in the table to the IPF and so a user may define the dimensions
+that they wish to have included by using the Dimensions parameter. The parameter should be passed a
+character vector with the names of the columns to include. Note that the array produced by this
+function will respect the order that you select the dimensions. This will not effect the calculation
+but can make the array easier to view by putting dimensions with fewer members in columns. \cr\cr
+Here are some examples that you can run to see dimension definition phase. \cr
+\preformatted{
+PrepareIPF(esoph, Dimensions = c("alcgp", "tobgp"))
+- Data frame submitted.
+- Analysing Dimensions:
+- Discovered 3 possible dimensions.
+-    : { agegp,alcgp,tobgp }
+-    : { 6,4,4 }
+- The number of possible array coordinates is 96
+- Filtered to 2 chosen dimensions.
+-    : { alcgp,tobgp }
+
+           tobgp
+alcgp       0-9g/day 10-19 20-29 30+
+  0-39g/day        9    10     5   5
+  40-79           34    17    15   9
+  80-119          19    19     6   7
+  120+            16    12     7  10
+
+PrepareIPF(esoph, Dimensions = c("tobgp", "alcgp"))
+....
+          alcgp
+tobgp      0-39g/day 40-79 80-119 120+
+  0-9g/day         9    34     19   16
+  10-19           10    17     19   12
+  20-29            5    15      6    7
+  30+              5     9      7   10
 }
-
-\section{Analysing Metrics}{
-
-}
-
-\section{Defining Metrics}{
-
 }
 
 \section{Aggregating Data}{
 
+Once the dimensions have been defined, either automatically or from the Dimensions parameter, the data
+is aggregated to have one entry for each of the members of the chosen dimensions. If the data file has any
+numeric columns these are summed during the aggregation. \cr\cr
+Here is an example that you can run to see the aggregation phase: \cr
+\preformatted{
+PrepareIPF(esoph, Dimensions = "agegp")
+	 - Data frame submitted.
+  - Analysing Dimensions:
+  - Discovered 3 possible dimensions.
+  -    : { agegp,alcgp,tobgp }
+  -    : { 6,4,4 }
+  - The number of possible array coordinates is 96
+  - Filtered to 1 chosen dimensions.
+  -    : { agegp }
+  - Aggregating Dimensions:
+  - Duplicate records found so we combined cells using the sum() function.
+
+agegp
+25-34 35-44 45-54 55-64 65-74   75+
+  1     9    46    76    55    13
+}
+If you repeat the above example with Dimensions = "tobgp" you will be able to
+see that the sum of the metric generated is always the same because of this data
+aggregation phase.
+}
+
+\section{Analysing Metrics}{
+
+In the examples that we showed above you can see that the resulting array has been populated with a numeric
+value. The function analyses the data that is submitted noting any columns that have numerical data.
+If there are no columns having numeric data the function returns a unitary seed.  This is an array with
+the selected dimensions having the value 1 in each of the array's cells. Here is an example: \cr
+\preformatted{
+PrepareIPF(esoph[c("alcgp", "tobgp")])
+- Data frame submitted.
+- Analysing Dimensions:
+- Discovered 2 possible dimensions.
+-    : { alcgp,tobgp }
+-    : { 4,4 }
+- The number of possible array coordinates is 16
+- No dimension filter was supplied.
+- The file has no numeric columns so a unitary seed will be returned.
+- Producing array output.
+alcgp
+tobgp      0-39g/day 40-79 80-119 120+
+  0-9g/day         1     1      1    1
+  10-19            1     1      1    1
+  20-29            1     1      1    1
+  30+              1     1      1    1
+}
+If the file has numerical columns then the default behaviour is for the function to choose the
+first column (reading from left to right) as the metric.
+}
+
+\section{Defining Metrics}{
+
+If the default behaviour of unitary seed or first column is not what you want then this
+can be overridden using the Metric parameter. The user can either give the name of a different
+column, or indeed any valid calculation. \cr\cr
+Here are some examples that you can run to see the defining metrics phase: \cr
+\preformatted{
+PrepareIPF(esoph, Metric = ncontrols)           #Select another column
+PrepareIPF(esoph, Metric = ncases / ncontrols)  #Select a calculation
+PrepareIPF(esoph, Metric = 1)                   #Force a unitary seed
+}
 }
 
 \section{Filling Coordinates}{
 
+Once all metric has been defined the system is almost ready to produce the array but first
+it must ensure that all of the coordinates of the array have a value.  In order to do this the
+system takes all of the possible values listed in each of the chosen dimensions and creates
+a set of all possible combinations, the cartesian product of the dimensions. If the input data
+has a value for each member of the resulting set then no more processing is required. If the data
+has gaps then additional records are inserted into the file with NA as the value of the metric.
+This is done to allow the user to distinguish between values that were submitted as zero and
+values which were missing from the data. \cr\cr
+Here is an example that you can run to see the filling coordinate phase: \cr
+\preformatted{
+PrepareIPF(esoph)
+...
+...
+, , agegp = 75+
+
+alcgp
+tobgp      0-39g/day 40-79 80-119 120+
+  0-9g/day         1     2      1    2
+  10-19            2     1      1    1
+  20-29           NA     0     NA   NA
+  30+              1     1     NA   NA
+}
+Here you can see a zero in \code{{tobgp = 20-29, alcgp = 40-79, agegp = 75+}} which existed
+in the original file and you can see five NAs which were added during the filling coordinate
+phase.
 }
 
 \section{Creating an Array}{
 
+The final array is then filled.
+\itemize{
+\item The dimensions will be as defined above
+\item The order of each dimension's members will be as per the original data when that data
+has ordered factors or an alphanumeric sort.
+\item The metric will be as defined above or a unitary seed.
+}
+The order of the dimensions in the array can be changed if the dimensions are defined using
+the Dimensions parameter. \cr
+The array built by the function makes full use of names. Every dimension has a name (e.g. alcgp, tobgp)
+and the members of each dimension are also named (e.g. 10-19, 20-20, 30+). This is required by the
+\code{\link{RunIPF}} function which will use these names to analyse how to apply targets and also
+to identify inconsistencies between seed and targets and inconsistencies between targets.\cr\cr
+\strong{CONVERTING FROM AN ARRAY TO A TABLE}
+When the user submits an array to this function a data table will be created.
+\itemize{
+\item A column will be produced for each dimension.  These columns will be ordered factors.
+\item A column called "value" will be prepared to hold the numbers in the cells of the array.
+\item There will be a row for each of the array's coordinates. The row count should, therefore,
+always be the cartesian product of the size of each dimension.
+}
+Here is an example to show how the function converts from an array back to a table: \cr
+\preformatted{
+array <- PrepareIPF(esoph)
+PrepareIPF(array)
+      tobgp     alcgp agegp value
+1: 0-9g/day 0-39g/day 25-34     0
+2:    10-19 0-39g/day 25-34     0
+3:    20-29 0-39g/day 25-34     0
+4:      30+ 0-39g/day 25-34     0
+}
+Note that applying PrepareIPF twice can be a useful technique.  The file esoph has 88 rows of data but
+the file produced using \code{PrepareIPF(PrepareIPF(esoph))} has the same data but it has 96 rows
+of data. 96 is the product of 6 times 4 times 4 which are the sizes of the dimensions.
 }
 
 \seealso{
 \code{\link{TAPChunks}}
 
-Other Iterative Proportional Fitting Tools: \code{\link{RunIPF}},
-  \code{\link{SetTargets}}
+Other Modeling Tools: \code{\link{RunIPF}}
 }
 \author{
 JTA - The Data Scientists
 }
+\concept{Modeling Tools}

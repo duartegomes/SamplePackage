@@ -9,7 +9,7 @@
 #' \strong{Column Name} \tab \strong{Description} \cr
 #' \emph{row_id} \tab This is the identifier of the original row from where the data was obtained.
 #' This allows us to recreate the exact same representation that we received from SpiceWorks. \cr
-#' \emph{id} \tab This is the original id applied by Spiceworks. Its use is deprecated.\cr
+#' \emph{id} \tab This is the original id applied by Spiceworks. Its use is not recommended.\cr
 #' \emph{uuid} \tab This is the standard org identifier for Spiceworks files.\cr
 #' \emph{msft_office_2010_standard_revised_flag} \tab \cr
 #' \emph{iwork_ofm_ie_flag} \tab \cr

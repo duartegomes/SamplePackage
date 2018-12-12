@@ -2,24 +2,34 @@
 % Please edit documentation in R/RedText.R
 \name{RedText}
 \alias{RedText}
-\title{RedText}
+\title{Printing Red Text}
 \usage{
 RedText(Text)
 }
 \arguments{
-\item{Text}{String to add font color}
+\item{Text}{String to add font color.}
+}
+\value{
+Returns a string.
 }
 \description{
-Apply Red font color
+This function applies red font color to the text submitted by wrapping the text
+with ANSI escape sequences.
 }
 \examples{
-  cat(RedText("Hello World!"))
-message(RedText("Status100"))
+  cat(TAPChunks:::RedText("Hello World!"))
+message(TAPChunks:::RedText("Status100"))
 }
 \seealso{
+\code{\link{TAPChunks}}
+
 Other Text Formatters: \code{\link{BlueText}},
   \code{\link{BoldText}}, \code{\link{GreenText}},
-  \code{\link{UnderLineText}}, \code{\link{YellowText}},
-  \code{\link{catInfo}}
+  \code{\link{ItalicText}}, \code{\link{StrikeText}},
+  \code{\link{UnderLineText}}, \code{\link{YellowText}}
 }
+\author{
+JTA - The Data Scientists
+}
+\concept{Text Formatters}
 \keyword{internal}

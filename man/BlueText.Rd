@@ -2,24 +2,34 @@
 % Please edit documentation in R/BlueText.R
 \name{BlueText}
 \alias{BlueText}
-\title{BlueText}
+\title{Printing Blue Text}
 \usage{
 BlueText(Text)
 }
 \arguments{
-\item{Text}{String to apply font color}
+\item{Text}{String to apply font color.}
+}
+\value{
+Returns a string
 }
 \description{
-Add Blue font color
+This function applies blue font color to the text submitted by wrapping the text
+with ANSI escape sequences.
 }
 \examples{
-  cat(BlueText("Hello World!"))
-message(BlueText("Status100"))
+  cat(TAPChunks:::BlueText("Hello World!"))
+message(TAPChunks:::BlueText("Status100"))
 }
 \seealso{
+\code{\link{TAPChunks}}
+
 Other Text Formatters: \code{\link{BoldText}},
-  \code{\link{GreenText}}, \code{\link{RedText}},
-  \code{\link{UnderLineText}}, \code{\link{YellowText}},
-  \code{\link{catInfo}}
+  \code{\link{GreenText}}, \code{\link{ItalicText}},
+  \code{\link{RedText}}, \code{\link{StrikeText}},
+  \code{\link{UnderLineText}}, \code{\link{YellowText}}
 }
+\author{
+JTA - The Data Scientists
+}
+\concept{Text Formatters}
 \keyword{internal}

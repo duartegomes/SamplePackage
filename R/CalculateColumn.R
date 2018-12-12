@@ -36,7 +36,8 @@
 #' Name the parameters:    \tab CalculateColumn(Data = iris, Calculation = newcol := 1)\cr
 #' }
 #' We recommend always naming the parameters for all TAPChunks functions to avoid errors in
-#' interpretation.  The first example that we gave requires a comma and is not so clear. The second example does not require the extra comma because
+#' interpretation.  The first example that we gave requires a extra comma to specify that filter is blank.
+#' The second example does not require the extra comma because we explicitly name the parameters.
 #' @section Receiving the result:
 #' The function has two mechanisms for returning the results.  It can either send the results
 #' back for the user to store or it can just add the calculation to the data without requiring the user
@@ -162,7 +163,7 @@
 #' to try and make sense of other data types. For example TRUE + FALSE is valid.  The system will interpret FALSE and the integer 0 and TRUE as the integer 1.  This means that
 #' the system will consider that FALSE < TRUE is a true statement. \cr \cr
 #' \strong{Functions:}\cr
-#' Calculations may also use functions and these functions may be those that are defines in R or they may be defined by the user.  When using a function it is important
+#' Calculations may also use functions and these functions may be those that are defined in R or they may be defined by the user.  When using a function it is important
 #' to consider the cardinality of the inputs and the result.  Some functions are designed to transform a single value to another single value, for example sqrt(n). In this
 #' example when we use the function sqrt the column created will calculate a value for each row.  Other functions, however, take a set of numbers and aggregate them into
 #' one single value. When we use these functions the calculation can aggregate the entire column and will place the result in every row of the result.  This is best demonstrated
@@ -284,55 +285,49 @@
 
 #' @seealso \code{\link{TAPChunks}}
 
-CalculateColumn  <- function(Data = NULL, Filter = 1 == 1, Calculation = NULL, By = NULL, Ret = TRUE){
-
+CalculateColumn <- function(Data = NULL, Filter = 1 == 1, Calculation = NULL, By = NULL, Ret = TRUE) {
   if (all(class(Data) == "data.frame")) Data <- data.table::as.data.table(Data)
-  if (is.null(Data)) catError("Data file not specified.")
+  if (is.null(Data)) TAPChunks:::catError("Data file not specified.")
 
-  f1  <- substitute(Filter)
-  if (typeof (f1) != "language")
-    catError("Syntax error in the Filter definition.")
+  f1 <- substitute(Filter)
+  if (typeof(f1) != "language") {
+    TAPChunks:::catError("Syntax error in the Filter definition.")
+  }
 
-  c1  <- substitute(Calculation)
-  if (typeof (c1) != "language" | !grepl(":=", deparse(c1)))
-    catError("Syntax error in Calculation definition.")
+  c1 <- substitute(Calculation)
+  if (typeof(c1) != "language" | !grepl(":=", deparse(c1))) {
+    TAPChunks:::catError("Syntax error in Calculation definition.")
+  }
 
   b1 <- substitute(By)
 
   e <- try(tb <- typeof(b1), silent = T)
   e <- strsplit(e, ":")[[1]][2]
-  if (!exists("tb")) catError(paste("Syntax error in the By definition:", e, "."))
-  if (!(tb == "symbol" | tb == "NULL")) catError("Syntax error in the By definition.")
+  if (!exists("tb")) TAPChunks:::catError(paste("Syntax error in the By definition:", e, "."))
+  if (!(tb == "symbol" | tb == "NULL")) TAPChunks:::catError("Syntax error in the By definition.")
 
-  if (is.null(b1)){
-    e <-  try({
+  if (is.null(b1)) {
+    e <- try({
       ret <- Data[eval(f1), eval(c1)][]
       if (Ret) return(ret) else return("OK")
     }
-    , silent = T)
+    ,
+    silent = T
+    )
     e <- strsplit(e, ":")[[1]][2]
 
-    catError(paste("Syntax error:", e, "."))
-  }else{
-    e <-  try({
+    TAPChunks:::catError(paste("Syntax error:", e, "."))
+  } else {
+    e <- try({
       ret <- Data[eval(f1), eval(c1), eval(b1)][]
       if (Ret) return(ret) else return("OK")
     }
-    , silent = T)
+    ,
+    silent = T
+    )
 
     e <- strsplit(e, ":")[[1]][2]
 
-    catError(paste("Syntax error:", e, "."))
+    TAPChunks:::catError(paste("Syntax error:", e, "."))
   }
-
-}
-
-
-#' @title Add Calculated Columns to data chunks
-#' @description This has been deprecated as it has now been replaced by \code{\link{CalculateColumn}}
-#' @author JTA - The Data Scientists
-#' @seealso \code{\link{TAPChunks}}
-#' @export
-CalculatedColumn <- function(Data, Filter = 1 == 1, Calculation = .SD, By = NULL, ...){
-  catError("This function has been renamed CalculateColumn and has been deprecated.")
 }

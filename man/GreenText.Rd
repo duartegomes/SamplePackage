@@ -2,24 +2,34 @@
 % Please edit documentation in R/GreenText.R
 \name{GreenText}
 \alias{GreenText}
-\title{GreenText}
+\title{Printing Green Text}
 \usage{
 GreenText(Text)
 }
 \arguments{
-\item{Text}{String to apply font color}
+\item{Text}{String to apply font color.}
+}
+\value{
+Returns a string.
 }
 \description{
-Add Green font color
+This function applies green font color to the text submitted by wrapping the text
+with ANSI escape sequences.
 }
 \examples{
-  cat(GreenText("Hello World!"))
-message(GreenText("Status100"))
+  cat(TAPChunks:::GreenText("Hello World!"))
+message(TAPChunks:::GreenText("Status100"))
 }
 \seealso{
+\code{\link{TAPChunks}}
+
 Other Text Formatters: \code{\link{BlueText}},
-  \code{\link{BoldText}}, \code{\link{RedText}},
-  \code{\link{UnderLineText}}, \code{\link{YellowText}},
-  \code{\link{catInfo}}
+  \code{\link{BoldText}}, \code{\link{ItalicText}},
+  \code{\link{RedText}}, \code{\link{StrikeText}},
+  \code{\link{UnderLineText}}, \code{\link{YellowText}}
 }
+\author{
+JTA - The Data Scientists
+}
+\concept{Text Formatters}
 \keyword{internal}

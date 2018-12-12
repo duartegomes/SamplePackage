@@ -2,30 +2,34 @@
 % Please edit documentation in R/BoldText.R
 \name{BoldText}
 \alias{BoldText}
-\title{BoldText}
+\title{Printing Bold Text}
 \usage{
 BoldText(Text)
 }
 \arguments{
-\item{Text}{String to apply bold codes}
+\item{Text}{String to apply bold codes.}
 }
 \value{
-Returns a string preceded by Esc[1m and closed with Esc[22m
+Returns a string
 }
 \description{
-Apply underline ANSI codes arount the submitted string
+This function bolds the text submitted by wrapping the text
+with ANSI escape sequences.
 }
 \examples{
-  cat(BoldText("Hello World!"))
-message(BoldText("Status100"))
+  cat(TAPChunks:::BoldText("Hello World!"))
+message(TAPChunks:::BoldText("Status100"))
 }
 \seealso{
+\code{\link{TAPChunks}}
+
 Other Text Formatters: \code{\link{BlueText}},
-  \code{\link{GreenText}}, \code{\link{RedText}},
-  \code{\link{UnderLineText}}, \code{\link{YellowText}},
-  \code{\link{catInfo}}
+  \code{\link{GreenText}}, \code{\link{ItalicText}},
+  \code{\link{RedText}}, \code{\link{StrikeText}},
+  \code{\link{UnderLineText}}, \code{\link{YellowText}}
 }
 \author{
 JTA - The Data Scientists
 }
+\concept{Text Formatters}
 \keyword{internal}

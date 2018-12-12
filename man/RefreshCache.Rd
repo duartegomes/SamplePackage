@@ -25,15 +25,13 @@ RefreshCache()
 \seealso{
 \code{\link{TAPChunks}}
 
-Other Cache Controls: \code{\link{CleanMemory}},
-  \code{\link{DeleteCache}},
+Other Cache Controls: \code{\link{DeleteCache}},
   \code{\link{DeleteOutdatedCache}},
-  \code{\link{ListCacheDirectory}}, \code{\link{Protect}},
+  \code{\link{ListCacheDirectory}},
   \code{\link{ShowCachePath}},
-  \code{\link{ShowCacheStatus}},
-  \code{\link{ShowConfigurationPath}},
-  \code{\link{Unprotect}}
+  \code{\link{ShowCacheStatus}}, \code{\link{Unprotect}}
 }
 \author{
 JTA - The Data Scientists
 }
+\concept{Cache Controls}
